@@ -1,5 +1,6 @@
 ---
 title: "Cumulative incidences for `r GROUP` group"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: 
   html_document: 
     df_print: kable

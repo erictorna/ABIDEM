@@ -20,7 +20,6 @@ GROUPS = scan(text = grep("GROUPS = ", readLines('global.make'), value = TRUE), 
 * Hazard ratios forest plots: `r sprintf("[%s](figure-hazard-ratios_%s.html)", GROUPS, GROUPS)`
     
 <!--
-
     * Hazard ratios adjusted by variables selected using forward-backward based on AIC criterion [[html]](table-hazard-ratios-02.html)
 
     * Hazard ratios __with people aged below 60__ adjusted by variables selected using forward-backward based on BIC criterion [[html]](table-hazard-ratios-03-age_lower_60.html)

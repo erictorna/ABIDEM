@@ -1,5 +1,6 @@
 ---
 title: "Hazard ratios adjusted by regicor variable for `r GROUP` group"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: 
   html_document: 
     df_print: kable

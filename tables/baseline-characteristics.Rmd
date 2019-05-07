@@ -1,5 +1,6 @@
 ---
 title: "Baseline Characteristics for `r GROUP` group"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: 
   html_document: 
     df_print: kable
