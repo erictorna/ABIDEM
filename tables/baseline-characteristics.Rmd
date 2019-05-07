@@ -1,0 +1,44 @@
+---
+title: "Baseline Characteristics for `r GROUP` group"
+output: 
+  html_document: 
+    df_print: kable
+    toc: yes
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+load(sprintf('baseline-characteristics_%s.RData', GROUP))
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+# Raw datasets descriptives
+
+```{r}
+global = global.raw
+itb_cat = itb_cat.raw
+```
+
+```{r child = 'baseline-characteristics_01.Rmd'}
+```
+
+# Multiple-imputed descriptives
+
+```{r}
+global = global.imp
+itb_cat = itb_cat.imp
+```
+
+```{r child = 'baseline-characteristics_01.Rmd'}
+```
+
+# Complete-case descriptives
+
+```{r}
+global = global.cc
+itb_cat = itb_cat.cc
+```
+
+```{r child = 'baseline-characteristics_01.Rmd'}
+```

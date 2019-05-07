@@ -1,0 +1,26 @@
+
+* Numeric
+
+```{r}
+global$numeric
+```
+
+* Dichotomic
+
+```{r}
+global$dichotomic
+```
+
+## By ABI categories
+
+* Numeric
+
+```{r}
+itb_cat$numeric
+```
+
+* Dichotomic
+
+```{r}
+itb_cat$dichotomic
+```

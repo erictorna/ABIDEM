@@ -1,0 +1,51 @@
+---
+title: "K"
+output: 
+  html_document: 
+    df_print: kable
+    theme: readable
+---
+
+```{r, include=FALSE}
+GROUPS = scan(text = grep("GROUPS = ", readLines('global.make'), value = TRUE), what = 'character')[-(1:2)]
+```
+
+* Baseline characteristics: `r sprintf("[%s](table-baseline-characteristics_%s.html)", GROUPS, GROUPS)`
+* Incidences: `r sprintf("[%s](table-incidences_%s.html)", GROUPS, GROUPS)`
+* Cumulative incidences: `r sprintf("[%s](figure-cumulative-incidences_%s.html)", GROUPS, GROUPS)`
+* Unadjusted hazard ratios: `r sprintf("[%s](table-hazard-ratios_%s.html)", GROUPS, GROUPS)`
+    * Hazard ratios adjusted by regicor variables: `r sprintf("[%s](table-hazard-ratios-01_%s.html)", GROUPS, GROUPS)`
+    * Hazard ratios adjusted by variables selected using forward-backward based on BIC criterion: `r sprintf("[%s](table-hazard-ratios-03_%s.html)", GROUPS, GROUPS)`
+    * Hazard ratios __using 3 categories__ adjusted by variables selected using forward-backward based on BIC criterion:  `r sprintf("[%s](table-hazard-ratios-03-3_categories_%s.html)", GROUPS, GROUPS)`
+* Hazard ratios forest plots: `r sprintf("[%s](figure-hazard-ratios_%s.html)", GROUPS, GROUPS)`
+    
+<!--
+
+    * Hazard ratios adjusted by variables selected using forward-backward based on AIC criterion [[html]](table-hazard-ratios-02.html)
+
+    * Hazard ratios __with people aged below 60__ adjusted by variables selected using forward-backward based on BIC criterion [[html]](table-hazard-ratios-03-age_lower_60.html)
+    * Hazard ratios __with people aged below 75__ adjusted by variables selected using forward-backward based on BIC criterion [[html]](table-hazard-ratios-03-age_lower_75.html)
+    * Hazard ratios __with non-smoking people__ adjusted by variables selected using forward-backward based on BIC criterion [[html]](table-hazard-ratios-03-non-smokers.html)
+    * Hazard ratios __category for people with itb=0.9 modified__ adjusted by variables selected using forward-backward based on BIC criterion [[html]](table-hazard-ratios-03-0.9_category.html)
+    * Hazard ratios __by cv-risk categories__ adjusted by variables selected using forward-backward based on BIC criterion:
+         * 0 ≤ regicor ≤ 5: [[html]](table-hazard-ratios-03-regicor_0-5.html) 
+         * 0 ≤ regicor ≤ 10: [[html]](table-hazard-ratios-03-regicor_0-10.html) 
+         * 5 < regicor ≤ 10: [[html]](table-hazard-ratios-03-regicor_5-10.html)
+         * 10 < regicor: [[html]](table-hazard-ratios-03-regicor_10p.html)
+    * Hazard ratios forest plot [[html]](figure-hazard-ratios.html)
+* Figures of smoothened hazard-ratios [[html]](smoothened-hazard-ratios.html)
+
+* __Final Figures&Tables__:
+    * Table 1. Descriptives [[docx]](table_01.docx)
+    * Table 2. Incidences [[docx]](table_02.docx)
+    * Figure 1. Flow chart [[svg]](flow-chart.svg) [[pdf]](flow-chart.pdf)
+    * Figure 2. Adjusted hazard ratios [[svg]](figure02.svg) [[pdf]](figure02.pdf)
+    * Table 1 (Supplementary). Descriptives [[docx]](table_01_sup.docx)
+    * Table 2 (Supplementary). Descriptives (Complete-case) [[docx]](table_02_sup.docx)
+    * Table 3 (Supplementary). Incidences (Complete-case) [[docx]](table_03_sup.docx)
+    * Figure 1 (Supplementary). Hazard ratios (Complete-case) [[svg]](figure01_sup.svg) [[pdf]](figure01_sup.pdf)
+    * Figure 2 (Supplementary). Unadjusted hazard ratios [[svg]](figure02_sup.svg) [[pdf]](figure02_sup.pdf)
+
+* __Alternative Figures&Tables__:
+    * Figure 2. Adjusted hazard ratios. Version 1: [[svg]](figure02_alt1.svg) [[pdf]](figure02_alt1.pdf) Version2:  [[svg]](figure02_alt2.svg) [[pdf]](figure02_alt2.pdf) 
+-->

@@ -1,0 +1,13 @@
+
+
+```{r}
+global %>%
+  select(outcome = variable, n, events, ends_with('_time'), inc, inc.lo, inc.hi)
+```
+
+## By ABI categories
+
+```{r}
+itb_cat %>%
+  select(outcome = variable, itb_cat, n, events, ends_with('_time'), inc, inc.lo, inc.hi)
+```

@@ -1,0 +1,35 @@
+---
+title: "Incidences for `r GROUP` group"
+output: 
+  html_document: 
+    df_print: kable
+    toc: yes
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+library(dplyr)
+load(sprintf('incidences_%s.RData', GROUP))
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+# Multiple-imputed descriptives
+
+```{r}
+global = global.mi
+itb_cat = itb_cat.mi
+```
+
+```{r child = 'incidences_01.Rmd'}
+```
+
+# Complete-case descriptives
+
+```{r}
+global = global.cc
+itb_cat = itb_cat.cc
+```
+
+```{r child = 'incidences_01.Rmd'}
+```

@@ -1,0 +1,11 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+.r_libs
+data
+data.external
+*.RData
+www
+*.docx
+versions

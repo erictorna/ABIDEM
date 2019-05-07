@@ -1,0 +1,20 @@
+
+
+```{r}
+global %>%
+  mutate(haz = exp(estimate),
+         lo = exp(estimate - 1.96 * std.error),
+         hi = exp(estimate + 1.96 * std.error)) %>%
+  select(outcome = rowname, haz, lo, hi, p.value, fmi)
+```
+
+## By ABI categories
+
+```{r}
+itb_cat %>%
+  mutate(haz = exp(estimate),
+         lo = exp(estimate - 1.96 * std.error),
+         hi = exp(estimate + 1.96 * std.error),
+         itb_cat = gsub('itb_cat', '', rowname)) %>%
+  select(variable, itb_cat, haz, lo, hi, p.value, fmi)
+```
