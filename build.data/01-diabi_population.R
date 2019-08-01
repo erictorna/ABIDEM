@@ -48,7 +48,7 @@ nrow(maria)
 # 51115
 
 
-FLOWCHART[['DM2 with ABI']] = nrow(maria)
+FLOWCHART[['DM2 or without DM with ABI']] = nrow(maria)
 
 # Ens quedem amb la gent entre 35 i 85 anys
 maria = maria %>%
@@ -112,7 +112,7 @@ maria = maria %>%
 #   filter(p.cvd == 0)
 # nrow(maria)
 # 34689
-FLOWCHART[['Without CVD']] = nrow(maria)
+#FLOWCHART[['Without CVD']] = nrow(maria)
 
 maria$frailty = apply(maria[,c('plegies', 'transplantament', 'dialisi', 'dementia', 'neoplasms_malignant', 'atdom')], 1, min, na.rm=TRUE)
 maria = maria %>%
