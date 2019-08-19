@@ -28,6 +28,14 @@ nrow(maria)
 # Condició anterior i vius (post 2006 i post ITB): 73.865
 #20180927 - Condició anterior i vius (post 2006 i post ITB): 70.251
 
+# Ens quedem amb la gent entre 35 i 85 anys
+maria = maria %>%
+  subset(35 <= age & age <= 85)
+nrow(maria)
+# Condició anterior amb edat entre 35 i 85 anys: 48603
+
+FLOWCHART[['Aged 35-85']] = nrow(maria)
+
 # Ens quedem amb diabètics
 maria = maria %>%
   mutate(
@@ -50,13 +58,7 @@ nrow(maria)
 
 FLOWCHART[['DM2 or without DM with ABI']] = nrow(maria)
 
-# Ens quedem amb la gent entre 35 i 85 anys
-maria = maria %>%
-  subset(35 <= age & age <= 85)
-nrow(maria)
-# Condició anterior amb edat entre 35 i 85 anys: 48603
 
-FLOWCHART[['Aged 35-85']] = nrow(maria)
 
 
 # Excloem els que claudiquen

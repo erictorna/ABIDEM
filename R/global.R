@@ -11,6 +11,12 @@ filter_group = function(.data, GROUP){
   if(GROUP == 'ALL'){
     return(.data)
   }
+  if(GROUP == 'CVD-yes_DM2-yes'){
+    return(filter(.data, p.cvd == 1 & p.diabetes == 1))
+  }
+  if(GROUP == 'CVD-yes_DM2-no'){
+    return(filter(.data, p.cvd == 1 & p.diabetes == 0))
+  }
   .data %>%
     filter(group == GROUP)
 }

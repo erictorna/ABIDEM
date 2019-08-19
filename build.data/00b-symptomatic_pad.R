@@ -50,13 +50,13 @@ maria = maria %>%
   mutate(
     symp_pad = 0L,
     # persons with history of pad
-    symp_pad = if_else(!is.na(pad_atc) & pad_atc <= dintro, 1L, symp_pad),
+    # symp_pad = if_else(!is.na(pad_atc) & pad_atc <= dintro, 1L, symp_pad),
     # persons with ABI <0.4
     symp_pad = if_else(itb < 0.4, 1L, symp_pad),
     # <---- CLAUDICA + abi<09 : NEW LINE
     symp_pad = if_else(ocip %in% claudica & itb < 0.9, 1L, symp_pad),
     # persons under PAD related treatment
-    symp_pad = if_else(ocip %in% pad_treat_prev_ocip, 1L, symp_pad))
+    symp_pad = if_else(ocip %in% pad_treat_prev_ocip & itb < 0.9, 1L, symp_pad))
 
 save(maria, pad_treat_prev_ocip,
      file = 'data/00b-symptomatic_pad.RData')

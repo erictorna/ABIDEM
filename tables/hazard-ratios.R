@@ -57,8 +57,8 @@ sex.mi = survival(data.imp, sex)
 
 data.cc = filter(data, .imp == 0)
 
-global.cc = survival(data.cc)
-sex.cc = survival(data.cc, sex)
+global.cc = try(survival(data.cc), silent = TRUE)
+sex.cc = try(survival(data.cc, sex), silent = TRUE)
 
 rm(data, data.imp, data.cc, ending_with)
 

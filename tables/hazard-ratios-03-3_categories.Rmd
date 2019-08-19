@@ -15,7 +15,7 @@ library(knitr)
 library(dplyr)
 library(huxtable)
 load(sprintf('hazard-ratios-03-3_categories_%s.RData', GROUP))
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(echo = FALSE, error = TRUE)
 options(huxtable.knit_print_df = FALSE)
 ```
 

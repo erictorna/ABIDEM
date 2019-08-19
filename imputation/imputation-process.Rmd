@@ -1,0 +1,100 @@
+---
+title: "Imputation process"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(flextable)
+library(officer)
+library(magrittr)
+library(data.table)
+library(ggplot2)
+knitr::opts_chunk$set(echo = FALSE, comment = ' ')
+load('../data/03b-mi-variable-selection.RData')
+```
+
+```{r}
+lns = readLines('../global.make')
+NIMP = as.numeric(gsub('^NIMP=', '', grep('^NIMP=', lns, value = TRUE)))
+lns = readLines("03a-mi-dataset.R")
+FROM = grep('^vrs', lns)
+TO = grep(")", lns)
+TO = min(TO[FROM < TO])
+VARS = paste(lns[FROM:TO], collapse = '\n')
+lns = readLines("imputation-process.R")
+pat = ".*maxit = ([0-9].),.*"
+NITER = as.numeric(sub(pat, "\\1", grep(pat, lns, value = TRUE)))
+```
+
+* __Number of datasets__: `r NIMP`
+* __Number of iterations__: `r NITER`
+* __Variables used in the imputation process__: `r paste(row.names(predictionMatrices$all), collapse = ", ")`
+
+
+## Prediction matrix
+
+```{r, results='asis', eval=FALSE}
+pred = predictionMatrices$all
+v = apply(pred, 1, function(row) paste(names(row)[row == 1], collapse=', '))
+for(i in seq_along(v)){
+  if(v[i] != ""){
+    cat(paste(sprintf("* __%s__:", rownames(pred)[i]), v[i], '\n'))
+  }
+}
+```
+
+```{r}
+pred = predictionMatrices$all
+P = t(pred[rowSums(pred)>0,colSums(pred)>0])
+P = P[order(rowSums(P), decreasing = TRUE),]
+P[P==1] = 'x'
+P[P==0] = ''
+df = as.data.table(P, keep.rownames = TRUE)
+names(df)[1] =  " "
+df %>%
+  flextable() %>%
+  style(pr_t = fp_text(font.size = 14), part = 'all') %>%
+  rotate(rotation = 'tbrl', align = 'center', part = 'header') %>%
+  align(align = "right", part = "header") %>%
+  align(align = "center", part = "body") %>%
+  height(part = 'header', height = 1)
+```
+
+```{r, eval=FALSE}
+X = predictionMatrices$all 
+X[X==1] = 'x'
+X[X==0] = ''
+df = as.data.table(X, keep.rownames = TRUE)
+names(df)[1] =  " "
+df %>%
+  flextable() %>%
+  rotate(rotation = 'tbrl', align = 'center', part = 'header') %>%
+  align(align = "right", part = "header") %>%
+  align(align = "center", part = "body") %>%
+  height(part = 'header', height = 1.8)
+```
+
+## Convergence
+
+```{r}
+df = lapply(1:NIMP, function(IMP_){
+  load(sprintf('../data/imputation-process-imp_%02d.RData', IMP_))
+  M = imputation$all$chainMean
+  V = imputation$all$chainVar
+  M = as.data.table(t(M[imputation$all$nmis > 0, , 1]))
+  V = as.data.table(t(V[imputation$all$nmis > 0, , 1]))
+  rbind(melt(M, measure.vars = 1:ncol(M))[,imp := IMP_][,stat := 'mean'][,iter := 1:NITER],
+        melt(V, measure.vars = 1:ncol(V))[,imp := IMP_][,stat := 'var'][,iter := 1:NITER])
+}) %>% rbindlist()
+```
+
+```{r, fig.height=7, fig.height=2.5, out.width="50%"}
+for(v in unique(df$variable)){
+  p = ggplot() +
+    geom_line(data = df[variable == v], aes(x = iter, y = value, col=factor(imp))) +
+    theme_minimal() + theme(legend.position = 'none') +
+    facet_wrap(~stat, scales = 'free', ncol = 2) + labs(x = 'Iteration', y = v)
+  print(p)
+}
+```
+

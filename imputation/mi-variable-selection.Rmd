@@ -1,0 +1,140 @@
+---
+title: "Variable selection"
+output:
+  html_document:
+    toc: yes
+---
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(comment="  ", echo=F, warning=F)
+if(!exists('data') | !is.data.frame(get('data')) ){
+  load('/home/idiap/projects.conan/D4E/data/eeee.RData')
+}
+
+OFILE = sprintf('/home/idiap/projects.conan/D4E/%s', OFILE)
+options(width=100)
+
+require(ggplot2)
+library(plyr)
+library(dplyr)
+library(tidyr)
+require(survival)
+
+
+source('/home/idiap/projects.conan/D4E/R/util_imputation.R')
+
+v_missing = c("talla", "pes", "lnbp", "lntad", "lnglucosa", "lncoltot", "lncolhdl", "lncolldl", "lntg")
+
+#### Descriptives variables disponibles
+v_numeric = c('age', 'na_comb.regicor.all')
+
+factors = c('medeaU1', 'medeaU2', 'medeaU3', 'medeaU4', 'medeaU5', 'exitusE', 'exitusT', 'i.ep_comb.regicor.all')
+meds = c('statine', 'aspirine', 'c10_no_statine', 'a10', 'c01', 'c02', 'c03', 'c07', 'c08', 'c09', 'c10', 'g03a', 
+         'h02', 'm01','n02', 'n05', 'n06')
+
+probs_basal = c('acute_liver_disease', 'adverse_effects', 'aff', 'ami', 'ami_atc', 'angor', 'ard', 'arthritis', 'asthma', 'smoking',
+               'atdom', 'cataract', 'chronic_liver_disease', 'ckd', 'copd', 'dementia', 'diabetes', 'diabetes_t2', 'alcoholism',
+               'dialisi', 'dvt', 'dyslipidemia', 'hepatopathy', 'hf', 'hf_atc', 'htn', 'htn_not_org', 'htn_org', 'stroke_i',
+               'hyperthyroidism', 'hypothyroidism', 'ihd_acute', 'ihd_atc', 'ihd_chronic', 'miopathy', 'neoplasms_benign',
+               'neoplasms_malignant', 'obesity', 'oth_arr', 'pad', 'pad_atc', 'plegies', 'sa', 'stroke', 'stroke_e', 'stroke_h', 
+               'sudden_death', 'tia', 'transplantament', 'vhd', 'vhd_nonrheumatic', 'vhd_rheumatic')
+
+## Selecting variable with at least 1 event
+d.probs = data %>% select(one_of(probs_basal)) %>% gather(variable, value) %>% dplyr::group_by(variable) %>% dplyr::summarise(count = sum(value))
+probs_basal = d.probs %>% subset(count > 0) %>% select(variable) %>% unlist %>% as.character
+v_factor = c(factors, meds, probs_basal)
+
+v_numeric_common = intersect( names(data), v_numeric)
+v_factor_common = intersect( names(data), v_factor)
+
+if( length(v_numeric) != length(v_numeric_common) | length(v_factor) != length(v_factor_common)){
+  miss = setdiff( c(v_numeric, v_factor), c(v_numeric_common, v_factor_common) )
+  message( sprintf("%s are not available in this table", paste(miss, collapse = ', ')) )
+}
+
+v_numeric = v_numeric_common
+v_factor = v_factor_common
+
+v_explanatory = c(v_numeric, v_factor)
+v_interact = 'age.user'
+alpha = 0.05
+```
+
+Variables to impute:
+  
+```{r}
+v_missing
+```
+
+Explanatory variables considered for the imputation process:
+  
+```{r}
+v_explanatory
+```
+
+Interaction
+
+```{r}
+v_interact
+```
+
+Significance levels at $\alpha$ = `r alpha`.
+
+```{r}
+data.imp = data[, c('ocip', 'dintro', union(v_explanatory, v_missing), v_interact)]
+
+restrictions = list(
+  list(v = c('lnbp', 'lntad'), omit = c('lnbp', 'lntad'), model='reg'),
+  list(v = c('talla', 'pes'), omit = c('talla', 'pes'), model='reg') ,
+  list(v = c('lncoltot', 'lncolhdl', 'lncolldl', 'lntg'), omit = c('lncoltot', 'lncolhdl', 'lncolldl', 'lntg'), model='reg'),
+  list(v = c('lnglucosa'), omit = 'lnglucosa', model='reg') )
+
+D.inter = split(data.imp, data.imp[,v_interact])
+
+res = list()
+for(lvl in names(D.inter)){
+  res[[lvl]] = sum_dependances( D.inter[[lvl]],
+                                ignore_vars = c('ocip', 'dintro', v_interact, 'na_comb.regicor.all', 'i.ep_comb.regicor.all'),
+                                restrictions = restrictions, alpha=alpha)
+}
+
+save(data.imp, res, D.inter, file=OFILE)
+```
+
+
+# Matrius de predicció
+
+
+```{r}
+for(inter in names(res)){
+  cat(sprintf("\n\n===== %10s ================================================================\n\n", inter))
+  mi_pred_matrix_h = llply(res[[inter]]$vars, function(l) union(l$na, l$value))
+  mi_pred_matrix_h = llply(mi_pred_matrix_h, function(l) union(l, c('i.ep_comb.regicor.all', 'na_comb.regicor.all', 
+                                                                    'age', 'smoking', 'diabetes')))
+  for(v in names(mi_pred_matrix_h)){
+    cat(sprintf("----- %10s ----------------------------------------------------------------\n", v))
+    print(sort(mi_pred_matrix_h[[v]]), quote=F)
+  }
+}
+```
+
+
+# Relacions calculades 
+
+## Relacions amb els valors
+
+```{r}
+for(inter in names(res)){
+  cat(sprintf("\n\n===== %10s ================================================================\n\n", inter))
+  print(res[[inter]]$values)
+}
+```
+
+## Relacions amb l'indicadora de missing
+
+```{r}
+for(inter in names(res)){
+  cat(sprintf("\n\n===== %10s ================================================================\n\n", inter))
+  print(res[[inter]]$na)
+}
+```

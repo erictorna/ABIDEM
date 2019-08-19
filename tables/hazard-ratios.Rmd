@@ -14,7 +14,7 @@ editor_options:
 library(knitr)
 library(dplyr)
 load(sprintf('hazard-ratios_%s.RData', GROUP))
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(echo = FALSE, error = TRUE)
 ```
 
 # Results for all population

@@ -11,7 +11,7 @@ load('data/03b-mi-variable-selection.RData')
 impute_category = function(category, D.imp){
   print(paste("Imputing: ", category))
   # Imputació tradicional
-  mice(D.imp[[category]], m = 1, maxit = 40, method = "norm",
+  mice(D.imp[[category]], m = 1, maxit = 60, method = "norm",
        predictorMatrix = predictionMatrices[[category]])
 }
 n_categories = names(D.imp)

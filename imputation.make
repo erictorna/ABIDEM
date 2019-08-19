@@ -1,6 +1,6 @@
 include global.make
 
-all : $(DATASETS)
+all : $(DATASETS) www/imputation-process.html $(TO_KEEP)
 
 imputation/K-imp_%.RData : data/imputed-dataset-imp_%.RData
 	cp $< $@
@@ -19,6 +19,9 @@ data/03b-mi-variable-selection.RData : imputation/03b-mi-variable-selection.R da
 
 data/03a-mi-dataset.RData : imputation/03a-mi-dataset.R build.data/K.RData
 	Rscript $<
+
+www/imputation-process.html : imputation/imputation-process.Rmd $(DATASETS)
+	Rscript -e 'rmarkdown::render("$<", output_file = "$(@F)", output_dir =  "$(@D)")'
 
 ## FILE BUILDING
 

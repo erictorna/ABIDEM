@@ -231,7 +231,7 @@ maria = maria %>%
 library(lubridate)
 # Temps fins a diabetes
 maria = maria %>%
-  mutate(time_diab = interval(pmax(diabetes_a10, dbirth), dintro)/years(1))
+  mutate(time_diab = pmax(0, interval(pmax(diabetes_a10, dbirth), dintro)/years(1)))
 
 # ### S'inclou alcohol
 # alcohol2012 = data.table::fread('data.external/alcohol2012.txt', sep = '@', col.names = c('ocip', 'date', 'code', 'value'))

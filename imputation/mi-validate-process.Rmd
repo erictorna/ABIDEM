@@ -1,0 +1,115 @@
+---
+title: "Validate MI process"
+output:
+  html_document:
+    toc: yes
+---
+
+```{r, include=FALSE}
+library(ggplot2)
+library(mice)
+library(gridExtra)
+library(lattice)
+
+library(dplyr)
+
+if(!exists('MI_SEL')) MI_SEL = "data/mi-variable-selection.RData"
+if(!exists('MI_user')) MI_user = "data/mi-imputation_user.RData"
+if(!exists('MI_control')) MI_control = "data/mi-imputation_control.RData"
+
+load(sprintf("/home/idiap/projects.conan/D4E/%s", MI_SEL))
+load(sprintf("/home/idiap/projects.conan/D4E/%s", MI_user))
+imp1 = imp
+load(sprintf("/home/idiap/projects.conan/D4E/%s", MI_control))
+imp2 = imp
+
+prediction_matrix = function(res, d){
+  mi_pred_matrix = lapply(res$vars, function(l) union(l$na, l$values))
+  mi_pred_matrix = lapply(mi_pred_matrix, function(l) union(l, c('i.ep_comb.regicor.all', 'na_comb.regicor.all', 
+                                                                'age', 'smoking', 'diabetes')))
+  pred.matrix <- matrix(0, nrow=length(names(d)), 
+                        ncol=length(names(d)), 
+                        dimnames=list(names(d), names(d)))
+  for(v in names(mi_pred_matrix)){
+    vsel = mi_pred_matrix[[v]]
+    pred.matrix[v, vsel] = 1
+  }
+    
+  pred.matrix
+}
+
+pred.matrix_user = prediction_matrix(res[['user']], D.inter[['user']])
+pred.matrix_control = prediction_matrix(res[['control']], D.inter[['control']])
+
+
+v_miss_user = colnames(pred.matrix_user)[apply(pred.matrix_user, 1, sum)>0]
+v_miss_control = colnames(pred.matrix_control)[apply(pred.matrix_control, 1, sum)>0]
+
+
+fit_model = function(v, d, pred.matrix) 
+  with(d, eval(parse(text=sprintf("glm(%s~%s)", v,  paste( colnames(pred.matrix)[pred.matrix[v,] == 1], collapse=' + ')))))
+
+MOD_user = lapply(v_miss_user, fit_model, complete(imp1, 1), pred.matrix_user)
+MOD_control = lapply(v_miss_control, fit_model, complete(imp2, 1), pred.matrix_control)
+
+names(MOD_user) = v_miss_user
+names(MOD_control) = v_miss_control
+
+SIZE = 20000
+fitted_df = function(v, mod, imp){
+  m = mod[[v]]
+  df = data.frame( 'fitted.values' = m$fitted.values[1:SIZE], 
+                   'residuals' = (m$residuals[1:SIZE] - mean(m$residuals[1:SIZE], na.rm=T))/sd(m$residuals[1:SIZE], na.rm=T), 
+                   'na' = as.factor(ifelse(is.na(imp$data[,v]), 'missing', 'not-missing')[1:SIZE] ) )
+  df$.id = v
+  df
+}
+
+df_user = lapply(v_miss_user, fitted_df, MOD_user, imp1) %>% bind_rows
+df_control = lapply(v_miss_control, fitted_df, MOD_control, imp2) %>% bind_rows
+```
+
+
+# Convergence
+
+## User
+  
+```{r fig.width=7, fig.height=12, echo=F}
+plot(imp1, layout=c(2, length(v_miss_user)))
+```
+
+##  Control
+
+```{r fig.width=7, fig.height=12, echo=F}
+plot(imp2, layout=c(2, length(v_miss_control)))
+```
+
+
+
+# Residuals
+
+The residuals are standardized
+
+```{r fig.width=14, fig.height=15, echo=F}
+grid.arrange(
+  ggplot(df_user %>% na.omit, aes(x=fitted.values, y=residuals, col=na)) + geom_point() + geom_abline(intercept=0, slope = 0, col='black') + facet_wrap(~.id+na, scales='free_x', ncol=2) + 
+    ggtitle('User') + theme(legend.position="top") ,
+  ggplot(df_control %>% na.omit, aes(x=fitted.values, y=residuals, col=na)) + geom_point() + geom_abline(intercept=0, slope = 0, col='black') + facet_wrap(~.id+na, scales='free_x', ncol=2) + 
+    ggtitle('Control') + theme(legend.position="top"),
+  ncol = 2)
+```
+
+## Marginal models
+
+## user
+
+```{r, echo=F}
+lapply(MOD_user, summary)
+```
+
+#### control
+
+```{r, echo=F}
+lapply(MOD_control, summary)
+```
+
