@@ -84,7 +84,6 @@ info = list(#'N' = as.character(Ns),
   # 'Retinopathy' = get_values('dichotomic', 'p.retinopathy'),
   # 'Neuropathy' = get_values('dichotomic', 'p.neuropathy'),
   'Medication'  = rep('Medication', 6),
-  'Antithrombotic agents' = get_values('dichotomic', 'p.b01'),
   'Antidiabetic therapy' = get_values('dichotomic', 'p.a10'),
   'Diuretics' = get_values('dichotomic', 'p.c03'),
   'Beta-blockers' = get_values('dichotomic', 'p.c07'),
@@ -92,7 +91,12 @@ info = list(#'N' = as.character(Ns),
   'Agents acting on the \nrenin-angiotensin system' = get_values('dichotomic', 'p.c09'),
   'Other antihypertensives' = get_values('dichotomic', 'p.c02'),
   'Statins' = get_values('dichotomic', 'p.statin'),
-  'Other lipid-lowering agent' = get_values('dichotomic', 'p.c10nostatin')
+  'Other lipid-lowering agent' = get_values('dichotomic', 'p.c10nostatin'),
+  'Antithrombotic Agent'  = rep('Antithrombotic Agent', 6),
+  'Vitamin K antagonists' = get_values('dichotomic', 'p.b01aa'),
+  'Heparin group' = get_values('dichotomic', 'p.b01ab'),
+  'Platelet aggregation inhibitors excl. heparin' = get_values('dichotomic', 'p.b01ac'),
+  'Other antithrombotic agents' = get_values('dichotomic', 'p.b01a_other')
 )
 K = length(info[[1]])
 
@@ -107,7 +111,7 @@ typology = tibble(
   lab2 = c('', paste(rep(c('No diabetes', 'Diabetes'), 2), sprintf("n = %d", Ns), sep='\n')))
 
 
-SUBTITLE = match(c('Comorbidities', 'Medication'), names(info))
+SUBTITLE = match(c('Comorbidities', 'Medication', 'Antithrombotic Agent'), names(info))
 tbl = tab %>%
   flextable(col_keys = names(tab)) %>%
   set_header_df(mapping = typology, key = "col_keys" ) %>%
