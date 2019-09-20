@@ -110,11 +110,11 @@ maria = maria %>%
 # maria %>%
 #   count()
 # # 9521
-# maria = maria %>%
-#   filter(p.cvd == 0)
+maria = maria %>%
+  filter(p.cvd == 0)
 # nrow(maria)
 # 34689
-#FLOWCHART[['Without CVD']] = nrow(maria)
+FLOWCHART[['Without CVD']] = nrow(maria)
 
 maria$frailty = apply(maria[,c('plegies', 'transplantament', 'dialisi', 'dementia', 'neoplasms_malignant', 'atdom')], 1, min, na.rm=TRUE)
 maria = maria %>%
