@@ -23,7 +23,7 @@ GROUPS = scan(text = grep("GROUPS = ", readLines('global.make'), value = TRUE), 
 ## Figures & Tables
 
 * Flow-chart [[svg]](flow-chart.svg) [[pdf]](flow-chart.pdf)
-* Table 01. Baseline characteristics of the study population [[docx]](table01.docx)
+* Table 01. Baseline characteristics of the study population with diabetes [[docx]](table01.docx)
 
 <!--
     * Hazard ratios adjusted by variables selected using forward-backward based on AIC criterion [[html]](table-hazard-ratios-02.html)
