@@ -5,7 +5,7 @@ FIGURES = cumulative-incidences hazard-ratios
 RDATA = $(foreach group,$(GROUPS),$(foreach figure,$(FIGURES),$(shell printf 'figures/%s_%s.RData' $(figure) $(group))))
 RMD = $(foreach group,$(GROUPS),$(foreach figure,$(FIGURES),$(shell printf 'www/figure-%s_%s.html' $(figure) $(group))))
 
-all : $(RDATA) $(RMD) $(INDEX) www/flow-chart.svg
+all : $(RDATA) $(RMD) $(INDEX) www/flow-chart.svg www/figure01.svg www/sup-figure01.svg
 
 #       www/flow-chart.svg www/figure02.svg www/figure01_sup.svg www/figure02_sup.svg \
 #       figures/smoothened-hazard-ratios-A.RData figures/smoothened-hazard-ratios-B.RData \
@@ -50,5 +50,8 @@ figures/%_ALL.RData : figures/%.R $(DATASETS)
 www/figure-%_ALL.html : figures/%.Rmd figures/%_ALL.RData
 	Rscript -e 'GROUP = "ALL"; rmarkdown::render("$<", output_file = "$(@F)", output_dir =  "$(@D)")'
 
-www/flow-chart.svg : figures/flow-chart.R data/01-diabi_population.RData build.data/K.RData
+www/flow-chart.svg : figures/flow-chart.R $(RMD)
+	Rscript $<
+
+www/%.svg : figures/%.R $(RMD)
 	Rscript $<

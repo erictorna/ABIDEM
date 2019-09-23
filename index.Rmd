@@ -22,7 +22,6 @@ GROUPS = scan(text = grep("GROUPS = ", readLines('global.make'), value = TRUE), 
  
 ## Figures & Tables
 
-* Flow-chart [[svg]](flow-chart.svg) [[pdf]](flow-chart.pdf)
 * Table 01. Characteristics of the study population with diabetes [[docx]](table01.docx)
 * Table 02. Characteristics of the study population without diabetes [[docx]](table02.docx)
 * Supplementary Table 01. Missing percentage and comparison of the characteristics of the imputed data with the complete-case population [[docx]](sup-table01.docx)
@@ -30,6 +29,10 @@ GROUPS = scan(text = grep("GROUPS = ", readLines('global.make'), value = TRUE), 
 * Supplementary Table 03. Characteristics of the study population without diabetes. Complete cases [[docx]](sup-table03.docx)
 * Supplementary Table 04. Unadjusted and adjusted hazard ratios for haemorragic stroke by diabetic condition and ABI category [[docx]](sup-table04.docx)
 * Supplementary Table 05. Unadjusted and adjusted hazard ratios for haemorragic stroke by diabetic condition and ABI category. Complete cases [[docx]](sup-table05.docx)
+
+* Flow-chart [[svg]](flow-chart.svg) [[pdf]](flow-chart.pdf)
+* Figure 1. Hazard ratios for haemorrhagic stroke by ABI in persons with and without diabetes [[svg]](figure01.svg) [[pdf]](figure01.pdf)
+* Supplementary Figure 1. Hazard ratios for haemorrhagic stroke by ABI in persons with and without diabetes. Complete cases [[svg]](sup-figure01.svg) [[pdf]](sup-figure01.pdf)
 
 <!--
     * Hazard ratios adjusted by variables selected using forward-backward based on AIC criterion [[html]](table-hazard-ratios-02.html)
