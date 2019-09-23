@@ -36,8 +36,35 @@ get_values_ = function(GROUP, type, .variable, m_t = identity, s_t = m_t){
   }
   row
 }
+get_outcomes_ = function(GROUP, type, .variable){
+  load(sprintf('tables/incidences_%s.RData', GROUP))
+  if(type == 'events'){
+    row = itb_cat.mi %>%
+      filter(variable == .variable) %>%
+      ungroup() %>% 
+      transmute(
+        itb_cat, 
+        text = sprintf("%d (%.1f%%)",events, 100 * events/n))%>% 
+      pivot_wider(names_from = itb_cat, values_from = text) %>%
+      unlist()
+  }
+  if(type == 'incidence'){
+    row = itb_cat.mi %>%
+      filter(variable == .variable) %>%
+      ungroup() %>% 
+      transmute(
+        itb_cat, 
+        text = sprintf("%.1f (%.1f-%.1f)", inc, inc.lo, inc.hi))%>% 
+      pivot_wider(names_from = itb_cat, values_from = text) %>%
+      unlist()
+  }
+  row
+}
 get_values = function(type, .variable, m_t = identity, s_t = m_t){
   unname(get_values_(GROUP, type, .variable, m_t = identity, s_t = m_t))
+}
+get_outcomes = function(type, .variable){
+  unname(get_outcomes_(GROUP, type, .variable))
 }
 K = 6
 info = list(#'N' = as.character(Ns),
@@ -80,7 +107,7 @@ info = list(#'N' = as.character(Ns),
   'Antidiabetic therapy' = get_values('dichotomic', 'p.a10'),
   'Vitamin K antagonists' = get_values('dichotomic', 'p.b01aa'),
   'Heparin group' = get_values('dichotomic', 'p.b01ab'),
-  'Other platelet aggregation inhibitors*' = get_values('dichotomic', 'p.b01ac'),
+  'Non-heparin platelet aggregation inhibitors' = get_values('dichotomic', 'p.b01ac'),
   'Other antithrombotic agents' = get_values('dichotomic', 'p.b01a_other'),
   'Diuretics' = get_values('dichotomic', 'p.c03'),
   'Beta-blockers' = get_values('dichotomic', 'p.c07'),
@@ -88,7 +115,10 @@ info = list(#'N' = as.character(Ns),
   'Agents acting on the \nrenin-angiotensin system' = get_values('dichotomic', 'p.c09'),
   'Other antihypertensives' = get_values('dichotomic', 'p.c02'),
   'Statins' = get_values('dichotomic', 'p.statin'),
-  'Other lipid-lowering agent' = get_values('dichotomic', 'p.c10nostatin')
+  'Other lipid-lowering agent' = get_values('dichotomic', 'p.c10nostatin'),
+  'Haemorrhagic stroke'  = rep('Haemorrhagic stroke', K),
+  'Raw events, %' = get_outcomes('events', 'd.stroke_h'),
+  'Incidence rate*' = get_outcomes('incidence', 'd.stroke_h')
 )
 
 load(sprintf('tables/baseline-characteristics_%s.RData', GROUP))
@@ -106,7 +136,7 @@ typology = tibble(
   lab1 = c('Variable', '0.4≤ABI<0.5', '0.5≤ABI<0.7', '0.7≤ABI<0.9', '0.9≤ABI<1.1', '1.1≤ABI<1.3', '1.3≤ABI<3'),
   lab2 = c('', sprintf("n = %d", unlist(Ns))))
 
-SUBTITLE = match(c('Comorbidities', 'Medications'), names(info))
+SUBTITLE = match(c('Comorbidities', 'Medications', 'Haemorrhagic stroke'), names(info))
 FONT.SIZE = 8
 tbl = tab %>%
   flextable(col_keys = names(tab)) %>%
@@ -122,10 +152,11 @@ tbl = tab %>%
   width(j = 1, 1.5)
 tbl
 
-heading = fpar(ftext(sprintf("Table 2. Baseline characteristics of the study population without diabetes (n = %d)", sum(Ns)),
+heading = fpar(ftext(sprintf("Table 1. Characteristics of the study population without diabetes (n = %d)", sum(Ns)),
                      fp_text(font.size = FONT.SIZE, bold = TRUE)))
-footer1 = fpar(ftext("Values are presented as mean (SD) or n (%).", fp_text(font.size = FONT.SIZE, bold = FALSE)))
-footer2 = fpar(ftext("* Excluding heparin.", fp_text(font.size = FONT.SIZE, bold = FALSE)))
+footer1 = fpar(ftext("Values are presented as mean (SD) or n (%). Haemorragic stroke is presented as events (%) and incidence rate (95%CI).", fp_text(font.size = FONT.SIZE, bold = FALSE)))
+#footer2 = fpar(ftext("* Excluding heparin.", fp_text(font.size = FONT.SIZE, bold = FALSE)))
+footer2 = fpar(ftext("* Per 1000 person-years.", fp_text(font.size = FONT.SIZE, bold = FALSE)))
 footer3 = fpar(ftext("ABI indicates ankle brachial index; BP, blood pressure; COPD, chronic obstructive pulmonary disease; CKD, chronic kidney disease, HbA1c, glycated hemoglobin A; n, number of participants.", fp_text(font.size = FONT.SIZE, bold = FALSE)))
 
 read_docx() %>%

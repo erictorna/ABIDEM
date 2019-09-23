@@ -226,7 +226,7 @@ maria <-maria %>%
 
 # Categories ABI
 maria = maria %>%
-  mutate(itb_cat = cut(itb, breaks = c(0.4,0.5,0.7,0.9,1.1,1.3,max(itb)), include.lowest = T, right = F))
+  mutate(itb_cat = cut(itb, breaks = c(0.4,0.5,0.7,0.9,1.1,1.3,3), include.lowest = T, right = F))
 
 library(lubridate)
 # Temps fins a diabetes
