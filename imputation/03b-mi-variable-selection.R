@@ -6,7 +6,8 @@ load('data/03a-mi-dataset.RData')
 TO_IMPUTE_TRANS = c("weight", "height", "ln_pp", "ln_sbp", "ln_glu", "ln_coltot", "ln_colhdl",
                     "ln_colldl", "ln_tg", "hba1c")
 
-D.imp = list('all' = maria.imp)
+D.imp = list('diab-yes' = filter(maria.imp, DIAB == 1),
+             'diab-no' = filter(maria.imp, DIAB == 0))
 
 getPredictionMatrix = function(.data){
   set.seed(1)

@@ -2,6 +2,7 @@ library(dplyr)
 library(tidyr)
 library(flextable)
 library(officer)
+library(ggplot2)
 source('R/global.R')
 
 GROUPS_LABELS = c('CVD-no_DM2-no' = 'No diabetes', 

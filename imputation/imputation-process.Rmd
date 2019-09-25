@@ -44,21 +44,35 @@ for(i in seq_along(v)){
 ```
 
 ```{r}
-pred = predictionMatrices$all
-P = t(pred[rowSums(pred)>0,colSums(pred)>0])
-P = P[order(rowSums(P), decreasing = TRUE),]
-P[P==1] = 'x'
-P[P==0] = ''
-df = as.data.table(P, keep.rownames = TRUE)
-names(df)[1] =  " "
-df %>%
-  flextable() %>%
-  style(pr_t = fp_text(font.size = 14), part = 'all') %>%
-  rotate(rotation = 'tbrl', align = 'center', part = 'header') %>%
-  align(align = "right", part = "header") %>%
-  align(align = "center", part = "body") %>%
-  height(part = 'header', height = 1)
+tab = lapply(predictionMatrices, function(pred){
+  P = t(pred[rowSums(pred)>0,colSums(pred)>0])
+  P = P[order(rowSums(P), decreasing = TRUE),]
+  P[P==1] = 'x'
+  P[P==0] = ''
+  df = as.data.table(P, keep.rownames = TRUE)
+  names(df)[1] =  " "
+  df %>%
+    flextable() %>%
+    style(pr_t = fp_text(font.size = 14), part = 'all') %>%
+    rotate(rotation = 'tbrl', align = 'center', part = 'header') %>%
+    flextable::align(align = "right", part = "header") %>%
+    flextable::align(align = "center", part = "body") %>%
+    flextable::height(part = 'header', height = 1)
+})
 ```
+
+* Diabetic population
+
+```{r}
+tab$`diab-yes`
+```
+
+* Non-diabetic population
+
+```{r}
+tab$`diab-no`
+```
+
 
 ```{r, eval=FALSE}
 X = predictionMatrices$all 
@@ -79,12 +93,13 @@ df %>%
 ```{r}
 df = lapply(1:NIMP, function(IMP_){
   load(sprintf('../data/imputation-process-imp_%02d.RData', IMP_))
-  M = imputation$all$chainMean
-  V = imputation$all$chainVar
-  M = as.data.table(t(M[imputation$all$nmis > 0, , 1]))
-  V = as.data.table(t(V[imputation$all$nmis > 0, , 1]))
-  rbind(melt(M, measure.vars = 1:ncol(M))[,imp := IMP_][,stat := 'mean'][,iter := 1:NITER],
+  M = lapply(imputation, function(imp) as.data.table(t(imp$chainMean[imp$nmis > 0, , 1])))
+  V = lapply(imputation, function(imp) as.data.table(t(imp$chainVar[imp$nmis > 0, , 1])))
+  mapply(function(M, V){
+      rbind(melt(M, measure.vars = 1:ncol(M))[,imp := IMP_][,stat := 'mean'][,iter := 1:NITER],
         melt(V, measure.vars = 1:ncol(V))[,imp := IMP_][,stat := 'var'][,iter := 1:NITER])
+  }, M, V, SIMPLIFY = FALSE) %>%
+    rbindlist(idcol = 'GROUP')
 }) %>% rbindlist()
 ```
 
@@ -93,7 +108,7 @@ for(v in unique(df$variable)){
   p = ggplot() +
     geom_line(data = df[variable == v], aes(x = iter, y = value, col=factor(imp))) +
     theme_minimal() + theme(legend.position = 'none') +
-    facet_wrap(~stat, scales = 'free', ncol = 2) + labs(x = 'Iteration', y = v)
+    facet_wrap(GROUP~stat, scales = 'free', ncol = 2) + labs(x = 'Iteration', y = v)
   print(p)
 }
 ```
