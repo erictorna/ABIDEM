@@ -12,7 +12,10 @@ D.imp = list('diab-yes' = filter(maria.imp, DIAB == 1),
 getPredictionMatrix = function(.data){
   set.seed(1)
   .data = .data %>% sample_n(min(5000, nrow(.data)))
-  X = .data %>% select_('age', 'men', ~starts_with('m.'), ~starts_with('p.'))
+  X = .data %>% select_('age', 'itb', 'men', ~starts_with('m.'), ~starts_with('p.'))
+  if( sum(is.na(.data$time_diab)) == 0 ){
+    X = .data %>% select_('age', 'itb', 'men', 'time_diab', ~starts_with('m.'), ~starts_with('p.'))
+  }
   all_zero = colSums(X) == 0
   all_one = colSums(X) == nrow(X)
   cat(sprintf("All zero or all one:\n%s", paste(names(X)[all_zero|all_one], collapse = '\n')))

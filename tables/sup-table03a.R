@@ -8,44 +8,44 @@ GROUPS_LABELS = c('CVD-no_DM2-no' = 'No diabetes',
                   'CVD-no_DM2-yes' = 'Diabetes')
 GROUPS = names(GROUPS_LABELS)
 
-load(sprintf("tables/hazard-ratios_CVD-no_DM2-no.RData", GROUPS[1]))
-no.raw = global.cc %>% 
+load(sprintf("tables/hazard-ratios_%s.RData", GROUPS[1]))
+no.raw = global.mi %>% 
   ungroup() %>%
   filter(variable == 'd.stroke_h') %>% 
   transmute(
     variable,
-    var = term,
+    var = rowname,
     hr = exp(estimate),
     lo = exp(estimate - 1.96 * std.error),
     hi = exp(estimate + 1.96 * std.error))
-load(sprintf("tables/hazard-ratios-03_CVD-no_DM2-no.RData", GROUPS[1]))
-no.adj = global.cc %>% 
+load(sprintf("tables/hazard-ratios-03_%s.RData", GROUPS[1]))
+no.adj = global.mi %>% 
   ungroup() %>%
   filter(variable == 'd.stroke_h') %>% 
   transmute(
     variable,
-    var = term,
+    var = rowname,
     hr = exp(estimate),
     lo = exp(estimate - 1.96 * std.error),
     hi = exp(estimate + 1.96 * std.error))
 
-load(sprintf("tables/hazard-ratios_CVD-no_DM2-yes.RData", GROUPS[2]))
-yes.raw = global.cc %>% 
+load(sprintf("tables/hazard-ratios_%s.RData", GROUPS[2]))
+yes.raw = global.mi %>% 
   ungroup() %>%
   filter(variable == 'd.stroke_h') %>% 
   transmute(
     variable,
-    var = term,
+    var = rowname,
     hr = exp(estimate),
     lo = exp(estimate - 1.96 * std.error),
     hi = exp(estimate + 1.96 * std.error))
-load(sprintf("tables/hazard-ratios-03_CVD-no_DM2-yes.RData", GROUPS[2]))
-yes.adj = global.cc %>% 
+load(sprintf("tables/hazard-ratios-03_%s.RData", GROUPS[2]))
+yes.adj = global.mi %>% 
   ungroup() %>%
   filter(variable == 'd.stroke_h') %>% 
   transmute(
     variable,
-    var = term,
+    var = rowname,
     hr = exp(estimate),
     lo = exp(estimate - 1.96 * std.error),
     hi = exp(estimate + 1.96 * std.error))
@@ -88,7 +88,7 @@ tbl = tab %>%
   padding(i = 7, padding.top = 10)
 tbl
 
-heading = fpar(ftext("Supplementary Table 4. Unadjusted and adjusted hazard ratios for haemorragic stroke by diabetic condition and ABI category. Complete cases",
+heading = fpar(ftext("Supplementary Table 4. Unadjusted and adjusted hazard ratios for haemorragic stroke by diabetic condition and ABI category",
                      fp_text(font.size = FONT.SIZE, bold = TRUE)))
 footer1 = fpar(ftext("Hazard ratios and 95% condidence interval are presented.", fp_text(font.size = FONT.SIZE, bold = FALSE)))
 
@@ -99,5 +99,5 @@ read_docx() %>%
   #body_end_section_landscape() %>%
   body_add_fpar(value = footer1) %>%
   #body_add_fpar(value = footer4) %>%
-  print(target = "www/sup-table05.docx")
+  print(target = "www/sup-table03a.docx")
 

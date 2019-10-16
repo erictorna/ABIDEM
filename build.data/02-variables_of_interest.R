@@ -18,7 +18,7 @@ maria = maria %>%
     age2 = age^2, #No hi és a DIABI_LIA
     pp = sbp-dbp,
     bmi_prev = bmi, #IMC provinent del SIDIAP
-    bmi = weight/(height^2), #IMC calculat amb el pes i l'altura
+    bmi = weight/((height/100)^2), #IMC calculat amb el pes i l'altura
     men = as.integer(sex == "H"),
     smoke_text = factor(smoke, labels = c("never", "current", "ex")))
 # no calculem el temps a diabetis
@@ -102,7 +102,7 @@ maria = maria %>%
     p.nephropathy = as.integer(!is.na(nephropathy) & nephropathy <= dintro),
     p.retinopathy = as.integer(!is.na(retinopathy) & retinopathy <= dintro),
     p.neuropathy = as.integer(!is.na(neuropathy) & neuropathy <= dintro),
-    #p.alcoholism = as.integer(!is.na(alcoholism) & alcoholism <= dintro),
+    p.alcoholism = as.integer(!is.na(alcoholism) & alcoholism <= dintro),
     p.ami = as.integer (!is.na(ami) & ami <= dintro),
     p.ami_atc = as.integer (!is.na(ami_atc) & ami_atc <= dintro),
     p.angor = as.integer (!is.na(angor) & angor <= dintro),
@@ -234,23 +234,23 @@ maria = maria %>%
   mutate(time_diab = pmax(0, interval(pmax(diabetes_a10, dbirth), dintro)/years(1)))
 
 # ### S'inclou alcohol
-# alcohol2012 = data.table::fread('data.external/alcohol2012.txt', sep = '@', col.names = c('ocip', 'date', 'code', 'value'))
-# alcohol2013 = data.table::fread('data.external/alcohol2013.txt', sep = '@', col.names = c('ocip', 'date', 'code', 'value'))
-# alcohol = filter(bind_rows(alcohol2012, alcohol2013), ocip %in% maria$ocip)
-# alcohol_prev = alcohol %>%
-#   mutate(date = lubridate::ymd(date)) %>%
-#   left_join(maria %>% select(ocip, dintro), by = 'ocip') %>%
-#   filter(date <= dintro) %>%
-#   arrange(ocip, desc(date)) %>%
-#   group_by(ocip) %>%
-#   slice(1) %>%
-#   select(ocip, alcohol = value)
-# maria = maria %>%
-#   left_join(alcohol_prev, by = 'ocip')
-# maria = maria %>%
-#   mutate(
-#     p.alcohol_risk = p.alcoholism | (!is.na(alcohol) & alcohol == 2),
-#     p.alcohol_low = !p.alcoholism  & (!is.na(alcohol) & alcohol == 1)
-#   )
+alcohol2012 = data.table::fread('data.external/alcohol2012.txt', sep = '@', col.names = c('ocip', 'date', 'code', 'value'))
+alcohol2013 = data.table::fread('data.external/alcohol2013.txt', sep = '@', col.names = c('ocip', 'date', 'code', 'value'))
+alcohol = filter(bind_rows(alcohol2012, alcohol2013), ocip %in% maria$ocip)
+alcohol_prev = alcohol %>%
+  mutate(date = lubridate::ymd(date)) %>%
+  left_join(maria %>% select(ocip, dintro), by = 'ocip') %>%
+  filter(date <= dintro) %>%
+  arrange(ocip, desc(date)) %>%
+  group_by(ocip) %>%
+  slice(1) %>%
+  select(ocip, alcohol = value)
+maria = maria %>%
+  left_join(alcohol_prev, by = 'ocip')
+maria = maria %>%
+  mutate(
+    p.alcohol_high = as.integer(p.alcoholism | (!is.na(alcohol) & alcohol == 2)),
+    p.alcohol_low = as.integer(!p.alcoholism  & (!is.na(alcohol) & alcohol == 1))
+  )
 
 save(maria, file = 'data/02-variables_of_interest.RData')

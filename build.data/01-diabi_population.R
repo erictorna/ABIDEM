@@ -112,6 +112,7 @@ maria = maria %>%
 # # 9521
 maria = maria %>%
   filter(p.cvd == 0)
+
 # nrow(maria)
 # 34689
 FLOWCHART[['Without CVD']] = nrow(maria)

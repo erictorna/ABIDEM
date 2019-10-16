@@ -36,7 +36,7 @@ VLINE = -1.25
 graph = create_graph() %>%
   label_node(sprintf("%d \npersons from 35 to 85 years old\nwith ABI measurement", FLOWCHART$`Aged 35-85`), 
              x = VLINE, y = 10) %>%
-  label_node(sprintf("%d \ncohort members", FLOWCHART$`ABI < 3`), 
+  label_node(sprintf("%d \ncohort members", nrow(maria)), 
              x = VLINE, y = 8) %>%
   join_node(x = VLINE, y = 9) %>%
   label_node(sprintf("data from %d persons excluded\\l- %d had type I diabetes\\l- %d had symptomatic peripheral arterial disease\\l- %d had ankle brachial index ≥3\\l", 

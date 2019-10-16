@@ -4,7 +4,7 @@ library(mice)
 library(survival)
 library(broom)
 
-if(!exists('GROUP')) GROUP = 'CVD-no_DM2-no'
+GROUP = 'ALL'
 
 source('R/global.R')
 
@@ -24,9 +24,9 @@ ending_with = function(.data, end_, ...) .data  %>%
 
 
 data = inner_join(
-  data %>% ending_with('.i', .imp, ocip, itb_cat, sex, p.cvd, p.frailty, p.hf,
-                       age, men, p.smoking, bmi, sbp, dbp, pp, coltot, colldl, colhdl, tg, hba1c, glu,p.alcohol_high, p.alcohol_low,
-                       time_diab, p.b01aa, p.b01ab, p.b01ac, p.b01a_other, p.htn, p.aff, p.copd, p.ckd, p.neoplasms_malignant, p.dm_med, p.c03, p.c07, p.c08, p.c09, p.c02, 
+  data %>% ending_with('.i', .imp, ocip, itb_cat, DIAB, p.a10, sex, p.cvd, p.frailty,
+                       age, men, p.smoking, bmi, sbp, dbp, pp, coltot, colldl, colhdl, tg, hba1c, glu,
+                       time_diab, p.b01aa, p.b01ab, p.b01ac, p.b01a_other, p.htn, p.aff, p.copd, p.ckd, p.neoplasms_malignant, p.c03, p.c07, p.c08, p.c09, p.c02, 
                        p.statin, p.c10nostatin) %>% gather(variable, event, starts_with('d.')),
   data %>% ending_with('.t', .imp, ocip) %>% gather(variable, time, starts_with('d.')), 
   by = c('.imp', 'ocip', 'variable'))
@@ -51,10 +51,10 @@ CLUSTER = parallel::makeCluster(10)
 clusterEvalQ(CLUSTER, { library(survival) })
 
 fb_cox = function(.data){
-  m0 = coxph(Surv(time, event)~itb_cat, data = .data)
-  MASS::stepAIC(m0, list(upper = ~itb_cat+age+men+p.smoking+bmi+sbp+dbp+pp+coltot+colldl+colhdl+p.b01aa+p.b01ab+p.b01ac+p.b01a_other+p.hf+ 
-                           tg+hba1c+glu+time_diab+p.htn+p.aff+p.copd+p.ckd+p.neoplasms_malignant+p.dm_med+p.c03+p.c07+p.c08+p.alcohol_high+p.alcohol_low+
-                           p.c09+p.c02+p.statin+p.c10nostatin, lower = ~itb_cat), k = log(nrow(.data)))
+  m0 = coxph(Surv(time, event)~DIAB+itb_cat, data = .data)
+  MASS::stepAIC(m0, list(upper = ~DIAB+itb_cat+p.a10+age+men+p.smoking+bmi+sbp+dbp+pp+coltot+colldl+colhdl+p.b01aa+p.b01ab+p.b01ac+p.b01a_other+ 
+                           tg+hba1c+glu+time_diab+p.htn+p.aff+p.copd+p.ckd+p.neoplasms_malignant+p.c03+p.c07+p.c08+
+                           p.c09+p.c02+p.statin+p.c10nostatin, lower = ~DIAB+itb_cat), k = log(nrow(.data)))
 }
 
 l_data = split(data, list(data$.imp, data$variable))
@@ -183,4 +183,4 @@ sex.cc = try(survival(data.cc %>% left_join(vars_sex.cc, by = c('outcome', 'sex'
 
 rm(data, data.imp, CLUSTER, l_data, data.cc, models, models_sex, ending_with)
 
-save.image(file = sprintf('tables/hazard-ratios-03_%s.RData', GROUP))
+save.image(file = 'tables/hazard-ratios-03-DIAB.RData')

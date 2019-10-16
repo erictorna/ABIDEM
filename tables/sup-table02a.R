@@ -8,12 +8,12 @@ GROUPS_LABELS = c('CVD-no_DM2-no' = 'No diabetes',
                   'CVD-no_DM2-yes' = 'Diabetes')
 GROUPS = names(GROUPS_LABELS)
 
-GROUP = 'CVD-no_DM2-no'
+GROUP = 'CVD-no_DM2-yes'
 
 get_values_ = function(GROUP, type, .variable, m_t = identity, s_t = m_t){
   load(sprintf('tables/baseline-characteristics_%s.RData', GROUP))
   if(type == 'numeric'){
-    row = itb_cat.imp[[type]] %>%
+    row = itb_cat.cc[[type]] %>%
       ungroup() %>%
       filter(variable == .variable) %>%
       transmute(
@@ -24,7 +24,7 @@ get_values_ = function(GROUP, type, .variable, m_t = identity, s_t = m_t){
       unlist()
   }
   if(type == 'dichotomic'){
-    row = itb_cat.imp[[type]] %>%
+    row = itb_cat.cc[[type]] %>%
       filter(variable == .variable) %>%
       ungroup() %>%
       transmute(
@@ -39,7 +39,7 @@ get_values_ = function(GROUP, type, .variable, m_t = identity, s_t = m_t){
 get_outcomes_ = function(GROUP, type, .variable){
   load(sprintf('tables/incidences_%s.RData', GROUP))
   if(type == 'events'){
-    row = itb_cat.mi %>%
+    row = itb_cat.cc %>%
       filter(variable == .variable) %>%
       ungroup() %>% 
       transmute(
@@ -49,7 +49,7 @@ get_outcomes_ = function(GROUP, type, .variable){
       unlist()
   }
   if(type == 'incidence'){
-    row = itb_cat.mi %>%
+    row = itb_cat.cc %>%
       filter(variable == .variable) %>%
       ungroup() %>% 
       transmute(
@@ -91,7 +91,7 @@ info = list(#'N' = as.character(Ns),
   'HbA1c, %' = get_values('numeric', 'hba1c'),
   # 'HbA1c, mmol/mol' = get_values('numeric', 'hba1c', m_t = function(x) (x-2.15)*10.929, s_t = function(x) x * 10.929),
   # 'Glucose, mmol/L' = get_values('numeric', 'glu', function(x) x * 0.0555),
-  #'Diabetes duration' = get_values('numeric', 'time_diab'),
+  'Diabetes duration' = get_values('numeric', 'time_diab'),
   'Comorbidities' = rep('Comorbidities', K),
   'Hypertension' = get_values('dichotomic', 'p.htn'),
   'Atrial fibrillation' = get_values('dichotomic', 'p.aff'),
@@ -122,7 +122,7 @@ info = list(#'N' = as.character(Ns),
 )
 
 load(sprintf('tables/baseline-characteristics_%s.RData', GROUP))
-Ns = itb_cat.imp$numeric %>% 
+Ns = itb_cat.cc$numeric %>% 
   filter(variable == 'age') %>% 
   ungroup() %>%
   select(itb_cat, n) %>%
@@ -152,7 +152,7 @@ tbl = tab %>%
   width(j = 1, 1.5)
 tbl
 
-heading = fpar(ftext(sprintf("Table 1. Characteristics of the study population without diabetes (n = %d)", sum(Ns)),
+heading = fpar(ftext(sprintf("Characteristics of the study population with diabetes. Complete cases (n = %d)", sum(Ns)),
                      fp_text(font.size = FONT.SIZE, bold = TRUE)))
 footer1 = fpar(ftext("Values are presented as mean (SD) or n (%). Haemorragic stroke is presented as events (%) and incidence rate (95%CI).", fp_text(font.size = FONT.SIZE, bold = FALSE)))
 #footer2 = fpar(ftext("* Excluding heparin.", fp_text(font.size = FONT.SIZE, bold = FALSE)))
@@ -167,5 +167,6 @@ read_docx() %>%
   body_add_fpar(value = footer1) %>%
   body_add_fpar(value = footer2) %>%
   body_add_fpar(value = footer3) %>%  
-  print(target = "www/table02.docx")
+  #body_add_fpar(value = footer4) %>%
+  print(target = "www/sup-table02a.docx")
 

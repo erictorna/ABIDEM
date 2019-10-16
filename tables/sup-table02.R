@@ -8,7 +8,7 @@ GROUPS_LABELS = c('CVD-no_DM2-no' = 'No diabetes',
                   'CVD-no_DM2-yes' = 'Diabetes')
 GROUPS = names(GROUPS_LABELS)
 
-GROUP = 'CVD-no_DM2-yes'
+GROUP = 'ALL'
 
 get_values_ = function(GROUP, type, .variable, m_t = identity, s_t = m_t){
   load(sprintf('tables/baseline-characteristics_%s.RData', GROUP))
@@ -152,7 +152,7 @@ tbl = tab %>%
   width(j = 1, 1.5)
 tbl
 
-heading = fpar(ftext(sprintf("Supplementary Table 2. Characteristics of the study population with diabetes. Complete cases (n = %d)", sum(Ns)),
+heading = fpar(ftext(sprintf("Supplementary Table 2. Characteristics of the study population. Complete cases (n = %d)", sum(Ns)),
                      fp_text(font.size = FONT.SIZE, bold = TRUE)))
 footer1 = fpar(ftext("Values are presented as mean (SD) or n (%). Haemorragic stroke is presented as events (%) and incidence rate (95%CI).", fp_text(font.size = FONT.SIZE, bold = FALSE)))
 #footer2 = fpar(ftext("* Excluding heparin.", fp_text(font.size = FONT.SIZE, bold = FALSE)))

@@ -8,52 +8,30 @@ GROUPS_LABELS = c('CVD-no_DM2-no' = 'No diabetes',
                   'CVD-no_DM2-yes' = 'Diabetes')
 GROUPS = names(GROUPS_LABELS)
 
-GROUP = 'ALL'
+GROUP = 'CVD-no_DM2-no'
 
 get_values_ = function(GROUP, type, .variable, m_t = identity, s_t = m_t){
   load(sprintf('tables/baseline-characteristics_%s.RData', GROUP))
   if(type == 'numeric'){
-    row = bind_cols(
-      global.raw[[type]] %>%
-        ungroup() %>%
-        filter(variable == .variable) %>%
-        transmute(
-          text.miss = ifelse(na == 0, "", sprintf("%0.2f%%", na * 100))
-        ),
-      global.imp[[type]] %>%
-        ungroup() %>%
-        filter(variable == .variable) %>%
-        transmute(
-          text.imp = sprintf("%0.2f (%.2f)", m_t(mean), s_t(sd))
-        ),
-      global.cc[[type]] %>%
-        ungroup() %>%
-        filter(variable == .variable) %>%
-        transmute(
-          text.cc = sprintf("%0.2f (%.2f)", m_t(mean), s_t(sd))
-        )) %>% 
+    row = itb_cat.cc[[type]] %>%
+      ungroup() %>%
+      filter(variable == .variable) %>%
+      transmute(
+        itb_cat,
+        text = sprintf("%0.2f (%.2f)", m_t(mean), s_t(sd))
+      ) %>% 
+      pivot_wider(names_from = itb_cat, values_from = text) %>%
       unlist()
   }
   if(type == 'dichotomic'){
-    row = bind_cols(
-      global.raw[[type]] %>%
-        ungroup() %>%
-        filter(variable == .variable) %>%
-        transmute(
-          text.miss = ifelse(na == 0, "", sprintf("%0.2f%%", na * 100))
-        ),
-      global.imp[[type]] %>%
-        ungroup() %>%
-        filter(variable == .variable) %>%
-        transmute(
-          text.imp = sprintf("%d (%.1f%%)", m, 100 * p)
-        ),
-      global.cc[[type]] %>%
-        ungroup() %>%
-        filter(variable == .variable) %>%
-        transmute(
-          text.cc = sprintf("%d (%.1f%%)", m, 100 * p)
-        )) %>% 
+    row = itb_cat.cc[[type]] %>%
+      filter(variable == .variable) %>%
+      ungroup() %>%
+      transmute(
+        itb_cat,
+        text = sprintf("%d (%.1f%%)", m, 100 * p)
+      ) %>% 
+      pivot_wider(names_from = itb_cat, values_from = text) %>%
       unlist()
   }
   row
@@ -61,47 +39,23 @@ get_values_ = function(GROUP, type, .variable, m_t = identity, s_t = m_t){
 get_outcomes_ = function(GROUP, type, .variable){
   load(sprintf('tables/incidences_%s.RData', GROUP))
   if(type == 'events'){
-    row = bind_cols(
-      global.mi %>%
-        ungroup() %>%
-        filter(variable == .variable) %>%
-        transmute(
-          text.miss = ""
-        ),
-      global.mi %>%
-        ungroup() %>%
-        filter(variable == .variable) %>%
-        transmute(
-          text.imp = sprintf("%d (%.1f%%)",events, 100 * events/n)
-        ),
-      global.cc %>%
-        ungroup() %>%
-        filter(variable == .variable) %>%
-        transmute(
-          text.cc = sprintf("%d (%.1f%%)",events, 100 * events/n)
-        )) %>% 
+    row = itb_cat.cc %>%
+      filter(variable == .variable) %>%
+      ungroup() %>% 
+      transmute(
+        itb_cat, 
+        text = sprintf("%d (%.1f%%)",events, 100 * events/n))%>% 
+      pivot_wider(names_from = itb_cat, values_from = text) %>%
       unlist()
   }
   if(type == 'incidence'){
-    row = bind_cols(
-      global.mi %>%
-        ungroup() %>%
-        filter(variable == .variable) %>%
-        transmute(
-          text.miss = ""
-        ),
-      global.mi %>%
-        ungroup() %>%
-        filter(variable == .variable) %>%
-        transmute(
-          text.imp = sprintf("%.1f (%.1f-%.1f)", inc, inc.lo, inc.hi)
-        ),
-      global.cc %>%
-        ungroup() %>%
-        filter(variable == .variable) %>%
-        transmute(
-          text.cc = sprintf("%.1f (%.1f-%.1f)", inc, inc.lo, inc.hi)
-        )) %>% 
+    row = itb_cat.cc %>%
+      filter(variable == .variable) %>%
+      ungroup() %>% 
+      transmute(
+        itb_cat, 
+        text = sprintf("%.1f (%.1f-%.1f)", inc, inc.lo, inc.hi))%>% 
+      pivot_wider(names_from = itb_cat, values_from = text) %>%
       unlist()
   }
   row
@@ -112,7 +66,7 @@ get_values = function(type, .variable, m_t = identity, s_t = m_t){
 get_outcomes = function(type, .variable){
   unname(get_outcomes_(GROUP, type, .variable))
 }
-K = 3
+K = 6
 info = list(#'N' = as.character(Ns),
   'ABI' = get_values('numeric', 'itb'),
   'Age, years' = get_values('numeric', 'age'),
@@ -137,9 +91,8 @@ info = list(#'N' = as.character(Ns),
   'HbA1c, %' = get_values('numeric', 'hba1c'),
   # 'HbA1c, mmol/mol' = get_values('numeric', 'hba1c', m_t = function(x) (x-2.15)*10.929, s_t = function(x) x * 10.929),
   # 'Glucose, mmol/L' = get_values('numeric', 'glu', function(x) x * 0.0555),
-  # 'Diabetes duration' = get_values('numeric', 'time_diab'),
+  #'Diabetes duration' = get_values('numeric', 'time_diab'),
   'Comorbidities' = rep('Comorbidities', K),
-  'Diabetes mellitus' = get_values('dichotomic', 'p.diabetes'),
   'Hypertension' = get_values('dichotomic', 'p.htn'),
   'Atrial fibrillation' = get_values('dichotomic', 'p.aff'),
   'Heart failure' = get_values('dichotomic', 'p.hf'),
@@ -169,27 +122,19 @@ info = list(#'N' = as.character(Ns),
 )
 
 load(sprintf('tables/baseline-characteristics_%s.RData', GROUP))
-Ns = bind_cols(
-  global.imp$numeric %>% 
-    filter(variable == 'age') %>% 
-    ungroup() %>%
-    select(imp = n) %>% transmute(miss = ""), 
-  global.imp$numeric %>% 
-    filter(variable == 'age') %>% 
-    ungroup() %>%
-    select(imp = n),
-  global.cc$numeric %>% 
-    filter(variable == 'age') %>% 
-    ungroup() %>%
-    select(imp = n))
+Ns = itb_cat.cc$numeric %>% 
+  filter(variable == 'age') %>% 
+  ungroup() %>%
+  select(itb_cat, n) %>%
+  pivot_wider(names_from = itb_cat, values_from = n)
 
 tab = as_tibble(do.call('rbind', info), 
                 rownames = "variable", .name_repair = ~make.names(1:length(Ns)))
 
 typology = tibble(
   col_keys = names(tab),
-  lab1 = c('Variable', 'Missing counts', 'Imputed dataset', 'Complete cases'),
-  lab2 = c('', '', sprintf("n = %s", unlist(Ns)[-1])))
+  lab1 = c('Variable', '0.4≤ABI<0.5', '0.5≤ABI<0.7', '0.7≤ABI<0.9', '0.9≤ABI<1.1', '1.1≤ABI<1.3', '1.3≤ABI<3'),
+  lab2 = c('', sprintf("n = %d", unlist(Ns))))
 
 SUBTITLE = match(c('Comorbidities', 'Medications', 'Haemorrhagic stroke'), names(info))
 FONT.SIZE = 8
@@ -203,11 +148,11 @@ tbl = tab %>%
   style(j = 1, i = c(1:min(SUBTITLE), SUBTITLE), pr_t = fp_text(font.size = FONT.SIZE, bold = TRUE), pr_p = fp_par(padding.left = 0, text.align = "left")) %>%
   merge_h(i = SUBTITLE) %>%
   border_remove() %>%
-  autofit()
-
+  autofit() %>%
+  width(j = 1, 1.5)
 tbl
 
-heading = fpar(ftext("Supplementary Table 1. Missing percentage and comparison of the characteristics of the imputed data with the complete-case population",
+heading = fpar(ftext(sprintf("Characteristics of the study population without diabetes. Complete cases (n = %d)", sum(Ns)),
                      fp_text(font.size = FONT.SIZE, bold = TRUE)))
 footer1 = fpar(ftext("Values are presented as mean (SD) or n (%). Haemorragic stroke is presented as events (%) and incidence rate (95%CI).", fp_text(font.size = FONT.SIZE, bold = FALSE)))
 #footer2 = fpar(ftext("* Excluding heparin.", fp_text(font.size = FONT.SIZE, bold = FALSE)))
@@ -222,6 +167,5 @@ read_docx() %>%
   body_add_fpar(value = footer1) %>%
   body_add_fpar(value = footer2) %>%
   body_add_fpar(value = footer3) %>%  
-  #body_add_fpar(value = footer4) %>%
-  print(target = "www/sup-table01.docx")
+  print(target = "www/sup-table02b.docx")
 

@@ -9,7 +9,7 @@ data.imp = bind_cols(bind_rows(lapply(imputation, mice::complete, action = 'long
   filter(.imp == 0)
 
 data.imp = data.imp %>%
-  filter(complete.cases(data.imp))
+  filter(complete.cases(data.imp %>% select(-time_diab)))
 
 maria.imp = data.imp %>%
   left_join(maria %>% 

@@ -19,20 +19,30 @@ GROUPS = scan(text = grep("GROUPS = ", readLines('global.make'), value = TRUE), 
     * Hazard ratios adjusted by variables selected using forward-backward based on BIC criterion: `r sprintf("[%s](table-hazard-ratios-03_%s.html)", GROUPS, GROUPS)`
     * Hazard ratios __using 3 categories__ adjusted by variables selected using forward-backward based on BIC criterion:  `r sprintf("[%s](table-hazard-ratios-03-3_categories_%s.html)", GROUPS, GROUPS)`
 * Hazard ratios forest plots: `r sprintf("[%s](figure-hazard-ratios_%s.html)", GROUPS, GROUPS)`
- 
+
+* Smoothened hazard ratios: `r sprintf("[%s](figure-smoothened-hazard-ratios_%s.html)", GROUPS, GROUPS)`
+    * Reference at ABI=1.2:  `r sprintf("[%s](figure-smoothened-hazard-ratios_12_%s.html)", GROUPS, GROUPS)`
+
 ## Figures & Tables
 
-* Table 01. Characteristics of the study population with diabetes [[docx]](table01.docx)
-* Table 02. Characteristics of the study population without diabetes [[docx]](table02.docx)
-* Supplementary Table 01. Missing percentage and comparison of the characteristics of the imputed data with the complete-case population [[docx]](sup-table01.docx)
-* Supplementary Table 02. Characteristics of the study population with diabetes. Complete cases [[docx]](sup-table02.docx)
-* Supplementary Table 03. Characteristics of the study population without diabetes. Complete cases [[docx]](sup-table03.docx)
-* Supplementary Table 04. Unadjusted and adjusted hazard ratios for haemorragic stroke by diabetic condition and ABI category [[docx]](sup-table04.docx)
-* Supplementary Table 05. Unadjusted and adjusted hazard ratios for haemorragic stroke by diabetic condition and ABI category. Complete cases [[docx]](sup-table05.docx)
+
+* __Table 01__. <br/>Characteristics of the study population [[docx]](table01.docx)
+    * (a) Characteristics of the study population with diabetes [[docx]](table01a.docx)
+    * (b) Characteristics of the study population without diabetes [[docx]](table01b.docx)
+* __Supplementary Table 01__. <br/>Missing percentage and comparison of the characteristics of the imputed data with the complete-case population [[docx]](sup-table01.docx)
+* __Supplementary Table 02__. <br/>Characteristics of the study population. Complete cases [[docx]](sup-table02.docx)
+    * (a) Characteristics of the study population with diabetes. Complete cases [[docx]](sup-table02a.docx)
+    * (b) Characteristics of the study population without diabetes. Complete cases [[docx]](sup-table02b.docx)
+* __Supplementary Table 03__. <br/>Unadjusted and adjusted hazard ratios for haemorragic stroke by ABI category [[docx]](sup-table03.docx)
+    * (a) Unadjusted and adjusted hazard ratios for haemorragic stroke by diabetic condition and ABI category [[docx]](sup-table03a.docx)
+* __Supplementary Table 04__. <br/>Unadjusted and adjusted hazard ratios for haemorragic stroke by ABI category. Complete cases [[docx]](sup-table04.docx)
+    * (a) Unadjusted and adjusted hazard ratios for haemorragic stroke by diabetic condition and ABI category. Complete cases [[docx]](sup-table04a.docx)
+
 
 * Flow-chart [[svg]](flow-chart.svg) [[pdf]](flow-chart.pdf)
 * Figure 1. Hazard ratios for haemorrhagic stroke by ABI in persons with and without diabetes [[svg]](figure01.svg) [[pdf]](figure01.pdf)
 * Supplementary Figure 1. Hazard ratios for haemorrhagic stroke by ABI in persons with and without diabetes. Complete cases [[svg]](sup-figure01.svg) [[pdf]](sup-figure01.pdf)
+
 
 <!--
     * Hazard ratios adjusted by variables selected using forward-backward based on AIC criterion [[html]](table-hazard-ratios-02.html)
