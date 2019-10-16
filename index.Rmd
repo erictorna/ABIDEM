@@ -40,8 +40,10 @@ GROUPS = scan(text = grep("GROUPS = ", readLines('global.make'), value = TRUE), 
 
 
 * Flow-chart [[svg]](flow-chart.svg) [[pdf]](flow-chart.pdf)
-* Figure 1. Hazard ratios for haemorrhagic stroke by ABI in persons with and without diabetes [[svg]](figure01.svg) [[pdf]](figure01.pdf)
-* Supplementary Figure 1. Hazard ratios for haemorrhagic stroke by ABI in persons with and without diabetes. Complete cases [[svg]](sup-figure01.svg) [[pdf]](sup-figure01.pdf)
+* __Figure 1.__ <br />Hazard ratios for haemorrhagic stroke by ABI [[svg]](figure01.svg) [[pdf]](figure01.pdf)
+    * Hazard ratios for haemorrhagic stroke by ABI in persons with and without diabetes [[svg]](figure01a.svg) [[pdf]](figure01a.pdf)
+* __Supplementary Figure 1.__ <br/>Hazard ratios for haemorrhagic stroke by ABI. Complete cases [[svg]](sup-figure01.svg) [[pdf]](sup-figure01.pdf)
+    * Hazard ratios for haemorrhagic stroke by ABI in persons with and without diabetes. Complete cases [[svg]](sup-figure01a.svg) [[pdf]](sup-figure01a.pdf)
 
 
 <!--

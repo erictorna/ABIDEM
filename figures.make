@@ -5,7 +5,7 @@ FIGURES = cumulative-incidences hazard-ratios smoothened-hazard-ratios smoothene
 RDATA = $(foreach group,$(GROUPS),$(foreach figure,$(FIGURES),$(shell printf 'figures/%s_%s.RData' $(figure) $(group))))
 RMD = $(foreach group,$(GROUPS),$(foreach figure,$(FIGURES),$(shell printf 'www/figure-%s_%s.html' $(figure) $(group))))
 
-all : $(RDATA) $(RMD) $(INDEX) www/flow-chart.svg www/figure01.svg www/sup-figure01.svg
+all : $(RDATA) $(RMD) $(INDEX) www/flow-chart.svg www/figure01.svg www/figure01a.svg www/sup-figure01.svg www/sup-figure01a.svg
 
 #       www/flow-chart.svg www/figure02.svg www/figure01_sup.svg www/figure02_sup.svg \
 #       figures/smoothened-hazard-ratios-A.RData figures/smoothened-hazard-ratios-B.RData \

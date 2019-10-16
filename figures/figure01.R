@@ -5,29 +5,19 @@ library(officer)
 library(ggplot2)
 source('R/global.R')
 
-GROUPS_LABELS = c('CVD-no_DM2-no' = 'No diabetes', 
-                  'CVD-no_DM2-yes' = 'Diabetes')
-GROUPS = names(GROUPS_LABELS)
-
-load(sprintf('figures/hazard-ratios_%s.RData', GROUPS[1]))
-dat.no = HRs.mi$`BIC criterion`$global %>%
+load(sprintf('figures/hazard-ratios_%s.RData', 'ALL'))
+dat.all = HRs.mi$`BIC criterion`$global %>%
   mutate(diab = 'No diabetes') %>%
   filter(stringr::str_sub(rowname, 1, 7) == 'itb_cat' & variable == 'd.stroke_h')
 
-load(sprintf('figures/hazard-ratios_%s.RData', GROUPS[2]))
-dat.yes = HRs.mi$`BIC criterion`$global %>%
-  mutate(diab = 'Diabetes') %>%
-  filter(stringr::str_sub(rowname, 1, 7) == 'itb_cat' & variable == 'd.stroke_h')
-
-dat = bind_rows(dat.no, dat.yes) %>%
+dat = dat.all %>%
   transmute(
-    diab,
     abi = gsub('itb_cat', '', rowname),
     hr = exp(estimate),
     lo = exp(estimate - 1.96 * std.error),
     hi = exp(estimate + 1.96 * std.error)
   ) %>%
-  bind_rows(expand_grid(diab = c('No diabetes', 'Diabetes'), abi = '[1.1,1.3)', hr = 1, lo = 1, hi = 1)) %>%
+  bind_rows(expand_grid(abi = '[1.1,1.3)', hr = 1, lo = 1, hi = 1)) %>%
   mutate(abi = factor(abi, levels = names(ABI_LABELS), labels = ABI_LABELS))
 dat
 
@@ -36,7 +26,6 @@ p1 = ggplot(data = dat) +
   geom_hline(aes(yintercept = 1), col = 'black', linetype = 2) +
   geom_errorbar(aes(x = abi, ymin = lo, ymax = hi), width = 0.2) +
   geom_point(aes(x = abi, y = hr), shape = 18, size = 2) +
-  facet_wrap(~diab, ncol = 1, scales = 'free_y') +
   theme_minimal() +
   theme(
     panel.grid = element_blank(),
@@ -59,7 +48,6 @@ p2 = ggplot() +
   #geom_hline(yintercept = 1, col = 'red', linetype = 2) +
   #geom_errorbar(aes(x = abi, ymin = lo, ymax = hi, col=method), position =  position_dodge(width=0.7), width = 0.2) +
   #geom_point(aes(x = abi, y = haz, col = method), shape = 18, size = 2, position =  position_dodge(width=0.7)) +
-  facet_wrap(~diab, ncol = 1, scales = 'free_y') +
   theme_minimal() +
   theme(
     panel.grid = element_blank(),
@@ -75,7 +63,7 @@ p2
 
 library(ggplotify)
 library(grid)
-svg(filename = 'www/figure01.svg', width = 6, height = 5.8)
+svg(filename = 'www/figure01.svg', width = 6, height = 2.8)
 grid.newpage()
 c1 = 0.65
 c2 = 0.35
@@ -85,7 +73,7 @@ print(p2, vp = vpa_)
 print(p1, vp = vpb_)
 dev.off()
 
-cairo_pdf(file = 'www/figure01.pdf', width = 6, height = 5.8)
+cairo_pdf(file = 'www/figure01.pdf', width = 6, height = 2.8)
 grid.newpage()
 c1 = 0.65
 c2 = 0.35
