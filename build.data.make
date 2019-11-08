@@ -1,6 +1,8 @@
-all : build.data/K.RData
+PROJECT_NAME = ABIDEM
 
-build.data/K.RData : data/03-extra_variables.RData
+all : build.data/$(PROJECT_NAME).RData
+
+build.data/$(PROJECT_NAME).RData : data/03-extra_variables.RData
 	cp $< $@
 	
 data/%.RData : build.data/%.R
