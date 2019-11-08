@@ -22,6 +22,7 @@ GROUPS = scan(text = grep("GROUPS = ", readLines('global.make'), value = TRUE), 
 
 * Smoothened hazard ratios: `r sprintf("[%s](figure-smoothened-hazard-ratios_%s.html)", GROUPS, GROUPS)`
     * Reference at ABI=1.2:  `r sprintf("[%s](figure-smoothened-hazard-ratios_12_%s.html)", GROUPS, GROUPS)`
+    * Reference at ABI=1.2 (Complete-case):  `r sprintf("[%s](figure-smoothened-hazard-ratios-cc_12_%s.html)", GROUPS, GROUPS)`
 
 ## Figures & Tables
 

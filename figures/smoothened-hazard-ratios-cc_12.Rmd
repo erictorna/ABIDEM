@@ -1,0 +1,29 @@
+---
+title: "Smoothened Hazard ratios"
+subtitle: "`r GROUP`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(ggplot2)
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r data}
+load(sprintf('smoothened-hazard-ratios-cc_12_%s.RData', GROUP))
+l_d.res_pool = split(d.res_pool, d.res_pool$variable)
+```
+
+```{r plot}
+for(outcome in names(l_d.res_pool)){
+  p = ggplot(data=l_d.res_pool[[outcome]]) +
+    geom_ribbon(aes(x=  itb, ymin = exp(b.pool-1.96*se.pool), ymax = exp(b.pool+1.96*se.pool)), alpha = 0.4) +
+    geom_line(aes(x = itb, y = exp(b.pool)), size = 1.3) +
+    geom_vline(xintercept = 1.2, linetype = 2, col = 4) +
+    geom_hline(yintercept = 1, linetype = 3, col = 2) +
+    coord_cartesian(ylim = c(0.8, 3), xlim = c(0.4, 2)) +
+    scale_x_continuous(trans = 'log', breaks = c(0.4, 0.5, 0.7, 0.9, 1.2, 1.4, 1.6, 2, 2.5)) +
+    theme_minimal() + labs(title = outcome, subtitle = 'Cubic splines without smoothing', y = 'Hazard-Ratio', x = 'ABI (log-scale)')
+  print(p)
+}
+```
