@@ -3,7 +3,7 @@ library(mice)
 if(!exists('NIMP')) NIMP = 1
 
 load(sprintf("data/imputation-process-imp_%02d.RData", NIMP))
-load('build.data/K.RData')
+load('build.data/ABIDEM.RData')
 
 data.imp = tibble(.imp = rep(NIMP, nrow(maria))) %>%
   bind_cols(bind_rows(lapply(imputation, mice::complete), .id = '.category'))

@@ -1,5 +1,5 @@
 library(dplyr)
-load('data/01-diabi_population.RData')
+load('data/01-abidem_population.RData')
 
 ## Definim noves variables
 # Only exitus before 2016 are considered
@@ -171,10 +171,10 @@ df_incidence = function(EVENT){
 maria = maria %>%
   #left_join(df_incidence(EVENT = 'ami'), by  = 'ocip') %>% mutate(d.ami.i = as.numeric(!is.na(d.ami))) %>%
   #left_join(df_incidence(EVENT = 'angor'), by  = 'ocip') %>% mutate(d.angor.i = as.numeric(!is.na(d.angor)))  %>%
-  left_join(df_incidence(EVENT = 'stroke_i'), by  = 'ocip') %>% mutate(d.stroke_i.i = as.numeric(!is.na(d.stroke_i))) %>%
-  left_join(df_incidence(EVENT = 'tia'), by  = 'ocip') %>% mutate(d.tia.i = as.numeric(!is.na(d.tia))) %>%
-  left_join(df_incidence(EVENT = 'stroke_h'), by  = 'ocip') %>% mutate(d.stroke_h.i = as.numeric(!is.na(d.stroke_h))) %>%
-  left_join(df_incidence(EVENT = 'stroke'), by = 'ocip') %>% mutate(d.stroke.i = as.numeric(!is.na(d.stroke))) %>%
+  # left_join(df_incidence(EVENT = 'stroke_i'), by  = 'ocip') %>% mutate(d.stroke_i.i = as.numeric(!is.na(d.stroke_i))) %>%
+  # left_join(df_incidence(EVENT = 'tia'), by  = 'ocip') %>% mutate(d.tia.i = as.numeric(!is.na(d.tia))) %>%
+  left_join(df_incidence(EVENT = 'dementia'), by  = 'ocip') %>% mutate(d.dementia.i = as.numeric(!is.na(d.dementia))) %>%
+  # left_join(df_incidence(EVENT = 'stroke'), by = 'ocip') %>% mutate(d.stroke.i = as.numeric(!is.na(d.stroke))) %>%
   #left_join(df_incidence(EVENT = 'nephropathy'), by = 'ocip') %>% mutate(d.nephropathy.i = as.numeric(!is.na(d.nephropathy))) %>%
   #left_join(df_incidence(EVENT = 'retinopathy'), by = 'ocip') %>% mutate(d.retinopathy.i = as.numeric(!is.na(d.retinopathy))) %>%
   #left_join(df_incidence(EVENT = 'neuropathy'), by = 'ocip') %>% mutate(d.neuropathy.i = as.numeric(!is.na(d.neuropathy))) %>%
@@ -185,10 +185,10 @@ maria = maria %>%
     d.death.t = as.numeric(dexitus - dintro)/365.25,
     #d.angor.t = as.numeric(if_else(d.angor.i == 1, d.angor, dexitus) - dintro)/365.25,
     #d.ami.t = as.numeric(if_else(d.ami.i == 1, d.ami, dexitus) - dintro)/365.25,
-    d.tia.t = as.numeric(if_else(d.tia.i == 1, d.tia, dexitus) - dintro)/365.25,
-    d.stroke_i.t = as.numeric(if_else(d.stroke_i.i == 1, d.stroke_i, dexitus) - dintro)/365.25,
-    d.stroke_h.t = as.numeric(if_else(d.stroke_h.i == 1, d.stroke_h, dexitus) - dintro)/365.25,
-    d.stroke.t = as.numeric(if_else(d.stroke.i == 1, d.stroke, dexitus) - dintro)/365.25
+    # d.tia.t = as.numeric(if_else(d.tia.i == 1, d.tia, dexitus) - dintro)/365.25,
+    # d.stroke_i.t = as.numeric(if_else(d.stroke_i.i == 1, d.stroke_i, dexitus) - dintro)/365.25,
+    d.dementia.t = as.numeric(if_else(d.dementia.i == 1, d.dementia, dexitus) - dintro)/365.25,
+    # d.stroke.t = as.numeric(if_else(d.stroke.i == 1, d.stroke, dexitus) - dintro)/365.25
     #d.nephropathy.t = as.numeric(if_else(d.nephropathy.i == 1, d.nephropathy, dexitus) - dintro)/365.25,
     #d.retinopathy.t = as.numeric(if_else(d.retinopathy.i == 1, d.retinopathy, dexitus) - dintro)/365.25,
     #d.neuropathy.t = as.numeric(if_else(d.neuropathy.i == 1, d.neuropathy, dexitus) - dintro)/365.25
@@ -201,17 +201,17 @@ maria = maria %>%
 #     d.neuropathy.i = if_else(p.neuropathy == 1, NA_real_, d.neuropathy.i)
 #   )
 
-maria = maria %>%
-  mutate(
-    #d.chd.t = pmin(d.ami.t, d.angor.t),
-    d.cerebrov.t = pmin(d.stroke_i.t, d.tia.t),
-    #d.cvd.t = pmin(d.chd.t, d.cerebrov.t),
-    #d.hard.t = pmin(d.ami.t, d.stroke_i.t),
-    #d.chd.i = pmax(d.ami.i, d.angor.i),
-    d.cerebrov.i = pmax(d.stroke_i.i, d.tia.i)
-    #d.cvd.i = pmax(d.chd.i, d.cerebrov.i),
-    #d.hard.i = pmax(d.ami.i, d.stroke_i.i)
-  )
+# maria = maria %>%
+#   mutate(
+#     #d.chd.t = pmin(d.ami.t, d.angor.t),
+#     d.cerebrov.t = pmin(d.stroke_i.t, d.tia.t),
+#     #d.cvd.t = pmin(d.chd.t, d.cerebrov.t),
+#     #d.hard.t = pmin(d.ami.t, d.stroke_i.t),
+#     #d.chd.i = pmax(d.ami.i, d.angor.i),
+#     d.cerebrov.i = pmax(d.stroke_i.i, d.tia.i)
+#     #d.cvd.i = pmax(d.chd.i, d.cerebrov.i),
+#     #d.hard.i = pmax(d.ami.i, d.stroke_i.i)
+#   )
 
 # Multiple Imputation variables
 maria <-maria %>%

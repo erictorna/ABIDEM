@@ -3,6 +3,17 @@ FLOWCHART = list()
 library(dplyr)
 # Carreguem població amb definició de symp_pad
 load('data/00b-symptomatic_pad.RData')
+load('data/dementia_ani.RData')
+dementia_ani = dementia_ani %>%
+  filter(ocip %in% maria$ocip) %>%
+  group_by(ocip) %>%
+  summarise(dementia_ani = min(dalta))
+maria = maria %>%
+  left_join(dementia_ani, by = 'ocip') %>%
+  mutate(
+    dementia_old = dementia,
+    dementia = dementia_ani
+  )
 
 nrow(maria)
 #SIDIAP-Q amb ABI: 74.280
@@ -30,7 +41,7 @@ nrow(maria)
 
 # Ens quedem amb la gent entre 35 i 85 anys
 maria = maria %>%
-  subset(35 <= age & age <= 85)
+  subset(65 <= age & age <= 85)
 nrow(maria)
 # Condició anterior amb edat entre 35 i 85 anys: 48603
 
@@ -132,5 +143,5 @@ maria = maria %>%
 
 
 
-save(maria, FLOWCHART, file = 'data/01-diabi_population.RData')
+save(maria, FLOWCHART, file = 'data/01-abidem_population.RData')
 

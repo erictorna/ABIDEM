@@ -5,12 +5,12 @@ TABLES = baseline-characteristics incidences hazard-ratios hazard-ratios-01 haza
 RDATA = $(foreach group,$(GROUPS),$(foreach table,$(TABLES),$(shell printf 'tables/%s_%s.RData' $(table) $(group))))
 RMD = $(foreach group,$(GROUPS),$(foreach table,$(TABLES),$(shell printf 'www/table-%s_%s.html' $(table) $(group))))
 
-all : $(RDATA) $(RMD) $(INDEX) \
-       www/table01.docx www/table01a.docx www/table01b.docx \
-       www/sup-table01.docx \
-	   www/sup-table02.docx www/sup-table02a.docx www/sup-table02b.docx \
-	   www/sup-table03.docx www/sup-table03a.docx \
-	   www/sup-table04.docx www/sup-table03a.docx 
+all : $(RDATA) $(RMD) $(INDEX) 
+    #    www/table01.docx www/table01a.docx www/table01b.docx \
+    #    www/sup-table01.docx \
+	#    www/sup-table02.docx www/sup-table02a.docx www/sup-table02b.docx \
+	#    www/sup-table03.docx www/sup-table03a.docx \
+	#    www/sup-table04.docx www/sup-table03a.docx 
 
 www/index.html : index.Rmd
 	Rscript -e 'rmarkdown::render("$<", output_file = "$(@F)", output_dir =  "$(@D)")'

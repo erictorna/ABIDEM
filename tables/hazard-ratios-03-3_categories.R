@@ -8,7 +8,7 @@ if(!exists('GROUP')) GROUP = 'CVD-no_DM2-no'
 
 source('R/global.R')
 
-data = lapply(list.files('imputation/', pattern = 'K-imp_*', full.names = TRUE), function(fname){
+data = lapply(list.files('imputation/', pattern = 'ABIDEM-imp_*', full.names = TRUE), function(fname){
   load(fname)
   maria.imp
 }) %>% bind_rows() %>% tbl_df() %>%

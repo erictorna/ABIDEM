@@ -8,7 +8,7 @@ if(!exists('GROUP')) GROUP = 'CVD-no_DM2-yes'
 
 source('R/global.R')
 
-data = lapply(list.files('imputation/', pattern = 'K-imp_*', full.names = TRUE), function(fname){
+data = lapply(list.files('imputation/', pattern = 'ABIDEM_*', full.names = TRUE), function(fname){
   load(fname)
   maria.imp
 }) %>% bind_rows() %>% tbl_df() %>%
@@ -29,7 +29,7 @@ data = inner_join(
   by = c('.imp', 'ocip', 'variable'))
 
 
-OUTCOMES = c('d.stroke_h',
+OUTCOMES = c('d.dementia',
              'd.death')
 
 data = data %>%

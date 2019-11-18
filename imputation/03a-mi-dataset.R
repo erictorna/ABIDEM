@@ -1,11 +1,12 @@
 library(dplyr)
-load('build.data/K.RData')
+PROJECT = gsub("PROJECT=", "", scan(text = grep("PROJECT=", readLines('global.make'), value = TRUE), what = 'character'))
+load(sprintf('build.data/%s.RData', PROJECT))
 maria.imp = maria
 
 maria.imp = maria.imp %>%
   mutate(
-    time = d.stroke.t,
-    event = d.stroke.i
+    time = d.dementia.t,
+    event = d.dementia.i
   )
 library(survival)
 aalen = survfit(coxph(Surv(time, event)~1, data=maria.imp), type='aalen')
