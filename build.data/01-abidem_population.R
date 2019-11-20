@@ -4,15 +4,35 @@ library(dplyr)
 # Carreguem població amb definició de symp_pad
 load('data/00b-symptomatic_pad.RData')
 load('data/dementia_ani.RData')
-dementia_ani = dementia_ani %>%
+dementia_global = dementia_global %>%
   filter(ocip %in% maria$ocip) %>%
   group_by(ocip) %>%
-  summarise(dementia_ani = min(dalta))
+  summarise(dementia_global = min(dalta))
+
+dementia_alzheimer = dementia_alzheimer %>%
+  filter(ocip %in% maria$ocip) %>%
+  group_by(ocip) %>%
+  summarise(dementia_alzheimer = min(dalta))
+
+dementia_vascular = dementia_vascular %>%
+  filter(ocip %in% maria$ocip) %>%
+  group_by(ocip) %>%
+  summarise(dementia_vascular = min(dalta))
+
+dementia_unspecified = dementia_unspecified %>%
+  filter(ocip %in% maria$ocip) %>%
+  group_by(ocip) %>%
+  summarise(dementia_unspecified = min(dalta))
+
+
 maria = maria %>%
-  left_join(dementia_ani, by = 'ocip') %>%
+  left_join(dementia_global, by = 'ocip') %>%
+  left_join(dementia_alzheimer, by = 'ocip') %>%
+  left_join(dementia_vascular, by = 'ocip') %>%
+  left_join(dementia_unspecified, by = 'ocip') %>%
   mutate(
     dementia_old = dementia,
-    dementia = dementia_ani
+    dementia = dementia_global
   )
 
 nrow(maria)

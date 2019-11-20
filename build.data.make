@@ -1,3 +1,5 @@
+PROJECT=ABIDEM
+
 all : build.data/$(PROJECT).RData
 
 build.data/$(PROJECT).RData : data/03-extra_variables.RData

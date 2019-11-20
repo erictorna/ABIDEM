@@ -30,6 +30,9 @@ data = inner_join(
 
 
 OUTCOMES = c('d.dementia',
+             'd.dementia_alzheimer',
+             'd.dementia_vascular',
+             'd.dementia_unspecified',
              'd.death')
 
 data = data %>%

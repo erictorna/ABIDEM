@@ -7,6 +7,9 @@ library(survival)
 if(!exists('GROUP')) GROUP = 'CVD-no_DM2-no'
 
 OUTCOMES = c('d.dementia',
+             'd.dementia_alzheimer',
+             'd.dementia_vascular',
+             'd.dementia_unspecified',
              'd.death')
 
 HRs.mi = list()

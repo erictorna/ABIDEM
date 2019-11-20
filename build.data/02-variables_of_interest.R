@@ -85,6 +85,18 @@ maria = maria %>%
   left_join(neuropathy, by = 'ocip')
 
 
+load('data/dementia_ani.RData')
+problems = problems %>%
+  filter(disease != 'dementia') %>%
+  bind_rows(dementia_global %>% mutate(source = 'ecap', field = 'ecap', disease = 'dementia') %>% 
+              select(ocip, date = dalta, source, field, icd, disease)) %>%
+  bind_rows(dementia_alzheimer %>% mutate(source = 'ecap', field = 'ecap', disease = 'dementia_alzheimer') %>% 
+              select(ocip, date = dalta, source, field, icd, disease)) %>%
+  bind_rows(dementia_vascular %>% mutate(source = 'ecap', field = 'ecap', disease = 'dementia_vascular') %>% 
+              select(ocip, date = dalta, source, field, icd, disease)) %>%
+  bind_rows(dementia_unspecified %>% mutate(source = 'ecap', field = 'ecap', disease = 'dementia_unspecified') %>% 
+              select(ocip, date = dalta, source, field, icd, disease))
+
 # EXPOSURE VARIABLES
 maria = maria %>%
   mutate(
@@ -174,6 +186,9 @@ maria = maria %>%
   # left_join(df_incidence(EVENT = 'stroke_i'), by  = 'ocip') %>% mutate(d.stroke_i.i = as.numeric(!is.na(d.stroke_i))) %>%
   # left_join(df_incidence(EVENT = 'tia'), by  = 'ocip') %>% mutate(d.tia.i = as.numeric(!is.na(d.tia))) %>%
   left_join(df_incidence(EVENT = 'dementia'), by  = 'ocip') %>% mutate(d.dementia.i = as.numeric(!is.na(d.dementia))) %>%
+  left_join(df_incidence(EVENT = 'dementia_alzheimer'), by  = 'ocip') %>% mutate(d.dementia_alzheimer.i = as.numeric(!is.na(d.dementia_alzheimer))) %>%
+  left_join(df_incidence(EVENT = 'dementia_vascular'), by  = 'ocip') %>% mutate(d.dementia_vascular.i = as.numeric(!is.na(d.dementia_vascular))) %>%
+  left_join(df_incidence(EVENT = 'dementia_unspecified'), by  = 'ocip') %>% mutate(d.dementia_unspecified.i = as.numeric(!is.na(d.dementia_unspecified))) %>%
   # left_join(df_incidence(EVENT = 'stroke'), by = 'ocip') %>% mutate(d.stroke.i = as.numeric(!is.na(d.stroke))) %>%
   #left_join(df_incidence(EVENT = 'nephropathy'), by = 'ocip') %>% mutate(d.nephropathy.i = as.numeric(!is.na(d.nephropathy))) %>%
   #left_join(df_incidence(EVENT = 'retinopathy'), by = 'ocip') %>% mutate(d.retinopathy.i = as.numeric(!is.na(d.retinopathy))) %>%
@@ -188,6 +203,9 @@ maria = maria %>%
     # d.tia.t = as.numeric(if_else(d.tia.i == 1, d.tia, dexitus) - dintro)/365.25,
     # d.stroke_i.t = as.numeric(if_else(d.stroke_i.i == 1, d.stroke_i, dexitus) - dintro)/365.25,
     d.dementia.t = as.numeric(if_else(d.dementia.i == 1, d.dementia, dexitus) - dintro)/365.25,
+    d.dementia_alzheimer.t = as.numeric(if_else(d.dementia_alzheimer.i == 1, d.dementia_alzheimer, dexitus) - dintro)/365.25,
+    d.dementia_vascular.t = as.numeric(if_else(d.dementia_vascular.i == 1, d.dementia_vascular, dexitus) - dintro)/365.25,
+    d.dementia_unspecified.t = as.numeric(if_else(d.dementia_unspecified.i == 1, d.dementia_unspecified, dexitus) - dintro)/365.25
     # d.stroke.t = as.numeric(if_else(d.stroke.i == 1, d.stroke, dexitus) - dintro)/365.25
     #d.nephropathy.t = as.numeric(if_else(d.nephropathy.i == 1, d.nephropathy, dexitus) - dintro)/365.25,
     #d.retinopathy.t = as.numeric(if_else(d.retinopathy.i == 1, d.retinopathy, dexitus) - dintro)/365.25,
