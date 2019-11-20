@@ -61,7 +61,7 @@ nrow(maria)
 
 # Ens quedem amb la gent entre 35 i 85 anys
 maria = maria %>%
-  subset(65 <= age & age <= 85)
+  subset(35 <= age & age <= 85)
 nrow(maria)
 # Condició anterior amb edat entre 35 i 85 anys: 48603
 
