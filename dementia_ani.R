@@ -12,11 +12,13 @@ global = function(icd){
   # -  frontotemporal dementia (G31.0)
   (substr(icd, 1, 3) == 'F00') |
     (substr(icd, 1, 3) == 'F01') |
-    (substr(icd, 1, 5) == 'F02.8') |
+    # (substr(icd, 1, 5) == 'F02.8') |
+    (substr(icd, 1, 3) == 'F02') |
     (substr(icd, 1, 3) == 'F03') |
     (substr(icd, 1, 3) == 'G30') |
-    (substr(icd, 1, 5) == 'G31.8') |
-    (substr(icd, 1, 5) == 'G31.0')
+    (substr(icd, 1, 5) == 'G31.0') |
+    (substr(icd, 1, 5) == 'G31.1') |
+    (substr(icd, 1, 5) == 'G31.8')
 }
 alzheimer = function(icd){
   # - dementia in Alzheimer’s disease (F00 i G30)
@@ -34,9 +36,11 @@ unspecified = function(icd){
 }
 other = function(icd){
   # - Altres: F02.8, G31.8, G31.0
-  (substr(icd, 1, 5) == 'F02.8') |
-    (substr(icd, 1, 5) == 'G31.8') |
-    (substr(icd, 1, 5) == 'G31.0')
+  # (substr(icd, 1, 5) == 'F02.8') |
+  (substr(icd, 1, 3) == 'F02') |
+    (substr(icd, 1, 5) == 'G31.0') |
+    (substr(icd, 1, 5) == 'G31.1') |
+    (substr(icd, 1, 5) == 'G31.8')
 }
 
 dementia_global = ecap %>%

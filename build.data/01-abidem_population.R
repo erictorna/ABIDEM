@@ -63,7 +63,7 @@ nrow(maria)
 maria = maria %>%
   subset(35 <= age & age <= 85)
 nrow(maria)
-# Condició anterior amb edat entre 35 i 85 anys: 48603
+# Condició anterior amb edat entre 35 i 85 anys: 69069
 
 FLOWCHART[['Aged 35-85']] = nrow(maria)
 
@@ -75,8 +75,8 @@ maria %>%
   count(!is.na(diabetes_a10) & diabetes_a10 <= dintro)
 # maria = maria %>%
 #   filter(!is.na(diabetes_a10) & diabetes_a10 <= dintro)
-# No diabètics: 21142
-# Diabètics: 52723
+# No diabètics: 19466
+# Diabètics: 49603
 
 # Eliminem els diabètics T1
 maria = maria %>%
@@ -84,7 +84,7 @@ maria = maria %>%
   subset(!((!is.na(diabetes) & diabetes <= dintro) &
              !(!is.na(diabetes_t2) & diabetes_t2 <= dintro)))
 nrow(maria)
-# 51115
+# 68069
 
 
 FLOWCHART[['DM2 or without DM with ABI']] = nrow(maria)
@@ -99,38 +99,38 @@ maria %>%
   count(!(itb < 0.9 &
             (itb < 0.4 |
                ocip %in% claudica |
-               ocip %in% pad_treat_prev_ocip))) # 2121
+               ocip %in% pad_treat_prev_ocip))) # 3360
 maria %>%
   count(!(itb < 0.9 &
-            (itb < 0.4))) # 390
+            (itb < 0.4))) # 593
 
 maria %>%
   subset(!(itb < 0.9 &
             (itb < 0.4))) %>%
   count(!(itb < 0.9 &
-            (ocip %in% claudica))) # 105
+            (ocip %in% claudica))) # 257
 maria %>%
   subset(!(itb < 0.9 &                  
              (itb < 0.4))) %>%
   subset(!(itb < 0.9 &
             (ocip %in% claudica))) %>%
   count(!(itb < 0.9 &
-            (ocip %in% pad_treat_prev_ocip))) # 1626
+            (ocip %in% pad_treat_prev_ocip))) # 2510
 maria <- maria %>%
   subset(!(itb < 0.9 &
              (itb < 0.4 |
                 ocip %in% claudica |
                 ocip %in% pad_treat_prev_ocip)))
-nrow(maria)   ## 46482
+nrow(maria)   ## 64709
 
 FLOWCHART[['Without PAD symptomatic']] = nrow(maria) 
 
 maria %>%
-  count(itb >= 3)  # 2272
+  count(itb >= 3)  # 2479
 maria = maria %>%
   subset(itb < 3)
 nrow(maria)
-## 44210
+## 62230
 FLOWCHART[['ABI < 3']] = nrow(maria)
 
 maria$cvd = apply(maria[,c('ami', 'ami_atc', 'angor', 'ihd_atc', 'stroke', 'tia', 'pad_atc')], 1, min, na.rm=TRUE)

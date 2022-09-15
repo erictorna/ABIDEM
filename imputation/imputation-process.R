@@ -10,7 +10,7 @@ load('data/03b-mi-variable-selection.RData')
 
 impute_category = function(category, D.imp){
   print(paste("Imputing: ", category))
-  # Imputació tradicional
+  # Imputació tradicional, Bayesian linear regression, also known as the normal model.
   mice(D.imp[[category]], m = 1, maxit = 60, method = "norm",
        predictorMatrix = predictionMatrices[[category]])
 }
