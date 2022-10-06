@@ -49,13 +49,13 @@ incidences = function(.data, ...){
       do(m = pool(as.mira(.$mod))))
   
   if('glm' %in% class(models$m[[1]])){
-    return(full_join(EVENTS, models %>%
-             tidy(m) %>%
+    return(full_join(EVENTS, models) %>%
+             cbind(pmap_dfr(list(data=as.list(models$m)), ~ tidy(..1))) %>%
              mutate(
                inc = 1000 * exp(estimate),
                inc.lo = 1000 * exp(estimate - 1.96 * std.error),
                inc.hi = 1000 * exp(estimate + 1.96 * std.error)
-             )))
+             ))
   }
   
   INCIDENCES = models %>%
@@ -83,8 +83,9 @@ itb_cat.mi = incidences(data.imp, itb_cat)
 data.cc = filter(data, .imp == 0)
 
 global.cc = incidences(data.cc)
+global.cc$m<-NULL
 itb_cat.cc = incidences(data.cc, itb_cat)
-
+itb_cat.cc$m<-NULL
 rm(data, data.imp, data.cc, ending_with)
 
 save.image(file = sprintf('tables/incidences_%s.RData', GROUP))

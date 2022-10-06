@@ -42,7 +42,7 @@ survival = function(.data, ...){
   
   if('coxph' %in% class(models$m[[1]])){
     return(models %>%
-             tidy(m))
+             cbind(pmap_dfr(list(data=as.list(models$m)), ~ tidy(..1))))
   }
   
   HRs = models %>%
@@ -64,7 +64,9 @@ sex.mi = survival(data.imp, sex)
 data.cc = filter(data, .imp == 0)
 
 global.cc = survival(data.cc)
+global.cc$m<-NULL
 sex.cc = try(survival(data.cc, sex), silent = TRUE)
+sex.cc$m<-NULL
 
 rm(data, data.imp, data.cc, ending_with)
 

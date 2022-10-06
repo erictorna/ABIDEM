@@ -9,6 +9,7 @@ load("data.external/CopyOfpad_cmbd.RData")
 #        left_join(pad_cmbd, by = 'ocip')
 #        count(is.na(pad_atc), is.na(dpad_cmbd), is.na(pad), dpad_cmbd <= pad,
 #              pad_atc <= pad))
+pad_cmbd = ungroup(pad_cmbd)
 maria = maria %>%                           # Filtrem ocips provinents del MARIA
   left_join(pad_cmbd, by = 'ocip')  %>%                                     # Afegim informació PAD_CMBD
   mutate(pad_atc = pmin(pad_atc, dpad_cmbd, pad, na.rm=TRUE)) # pad_atc és la primera aparició de pad_atc, dpad_cmbd i pad

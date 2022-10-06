@@ -34,7 +34,8 @@ NITER = as.numeric(sub(pat, "\\1", grep(pat, lns, value = TRUE)))
 ## Prediction matrix
 
 ```{r, results='asis', eval=FALSE}
-pred = predictionMatrices$all
+# pred = predictionMatrices$all
+pred = rbind(predictionMatrices$`diab-yes`, predictionMatrices$`diab-no`)
 v = apply(pred, 1, function(row) paste(names(row)[row == 1], collapse=', '))
 for(i in seq_along(v)){
   if(v[i] != ""){
@@ -75,7 +76,8 @@ tab$`diab-no`
 
 
 ```{r, eval=FALSE}
-X = predictionMatrices$all 
+# X = predictionMatrices$all 
+X = rbind(predictionMatrices$`diab-yes`, predictionMatrices$`diab-no`)
 X[X==1] = 'x'
 X[X==0] = ''
 df = as.data.table(X, keep.rownames = TRUE)
@@ -96,8 +98,8 @@ df = lapply(1:NIMP, function(IMP_){
   M = lapply(imputation, function(imp) as.data.table(t(imp$chainMean[imp$nmis > 0, , 1])))
   V = lapply(imputation, function(imp) as.data.table(t(imp$chainVar[imp$nmis > 0, , 1])))
   mapply(function(M, V){
-      rbind(melt(M, measure.vars = 1:ncol(M))[,imp := IMP_][,stat := 'mean'][,iter := 1:NITER],
-        melt(V, measure.vars = 1:ncol(V))[,imp := IMP_][,stat := 'var'][,iter := 1:NITER])
+      rbind(melt(as.data.table(M), measure.vars = 1:ncol(as.data.table(M)))[,imp := IMP_][,stat := 'mean'][, iter := rep((1:NITER), length.out = .N)],
+        melt(as.data.table(V), measure.vars = 1:ncol(as.data.table(V)))[,imp := IMP_][,stat := 'var'][, iter := rep((1:NITER), length.out = .N)])
   }, M, V, SIMPLIFY = FALSE) %>%
     rbindlist(idcol = 'GROUP')
 }) %>% rbindlist()

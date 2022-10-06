@@ -66,12 +66,12 @@ sex_interaction = function(mod, data){
 }
 l_anova = mapply(sex_interaction, models, l_data, SIMPLIFY = FALSE)
 
-l_proportionality = lapply(models, cox.zph)
-proportionality = l_proportionality %>%
-  lapply(function(ll) as_tibble(as.data.frame(ll$table) %>% rownames_to_column())) %>%
-  bind_rows(.id = 'model') %>%
-  separate(model, c('imp', 'd', 'outcome'), sep='\\.') %>%
-  select(-d)
+# l_proportionality = lapply(models, cox.zph)
+# proportionality = l_proportionality %>%
+#   lapply(function(ll) as_tibble(as.data.frame(ll$table) %>% rownames_to_column())) %>%
+#   bind_rows(.id = 'model') %>%
+#   separate(model, c('imp', 'd', 'outcome'), sep='\\.') %>%
+#   select(-d)
 
 pv = sapply(l_anova, function(x) x$`P(>|Chi|)`[[2]])
 itb_sex_interactions = tibble(
@@ -88,7 +88,7 @@ itb_sex_interactions = tibble(
 l_data = split(data, list(data$.imp, data$variable, data$sex))
 models_sex = parLapply(cl = CLUSTER, l_data, fb_cox)
 
-l_proportionality_sex = lapply(models_sex, cox.zph)
+# l_proportionality_sex = lapply(models_sex, cox.zph)
 stopCluster(CLUSTER)
 
 df = lapply(models , function(.model){
@@ -150,7 +150,7 @@ survival = function(.data, ..., .frm){
   
   if('coxph' %in% class(models$m[[1]])){
     return(models %>%
-             tidy(m))
+             cbind(pmap_dfr(list(data=as.list(models$m)), ~ tidy(..1))))
   }
   
   HRs = models %>%
@@ -171,7 +171,7 @@ data.imp = filter(data, .imp > 0) %>%
 
 global.mi = survival(data.imp %>% left_join(vars.imp, by = 'outcome'))
 sex.mi = survival(data.imp %>% left_join(vars_sex.imp, by = c('outcome', 'sex')), sex)
-# 
+ 
 
 data.cc = filter(data, .imp == 0) %>%
   mutate(

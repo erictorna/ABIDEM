@@ -1,6 +1,6 @@
 library(tidyverse)
 
-if(!exists('GROUP')) GROUP = 'CVD-no_DM2-no'
+if(!exists('GROUP')) GROUP = 'ALL'
 
 load('build.data/ABIDEM.RData')
 source('R/global.R')
@@ -13,7 +13,7 @@ data = lapply(list.files('imputation/', pattern = 'ABIDEM-imp_*', full.names = T
 
 numeric_describe = function(.data, ...){
   .data %>%
-    select(.imp, ..., age, itb, weight, height, hba1c, followup = d.death.t, coltot, 
+    select(.imp, ..., men, age, itb, weight, height, hba1c, followup = d.death.t, coltot, 
            colhdl, colldl, tg, dbp, sbp, bmi, cre, glu, hr, pp, time_diab) %>%
     gather(variable, value, age:time_diab) %>%
     group_by(.imp, variable, ...) %>%

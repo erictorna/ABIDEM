@@ -1,6 +1,6 @@
 all : 
-	$(MAKE) -f build.data.make -j 4 -k
-	$(MAKE) -f imputation.make -j 10 -k
-	$(MAKE) -f tables.make -j 2 -k
-	$(MAKE) -f figures.make -k
+	$(MAKE) -f build.data.make 
+	$(MAKE) -f imputation.make  
+	$(MAKE) -f tables.make  
+	$(MAKE) -f figures.make 
 
