@@ -4,7 +4,7 @@ library(mice)
 library(survival)
 library(broom)
 
-if(!exists('GROUP')) GROUP = 'CVD-no_DM2-no'
+if(!exists('GROUP')) GROUP = 'ALL'
 
 source('R/global.R')
 
@@ -15,8 +15,8 @@ data = lapply(list.files('imputation/', pattern = 'ABIDEM-imp_*', full.names = T
   filter_group(GROUP) %>%
   mutate(time_diab = if_else(is.na(time_diab), 0, time_diab))
 
-data$itb_cat = factor(as.character(data$itb_cat), 
-                      levels = ABI_LEVELS)
+# data$itb_cat = factor(as.character(data$itb_cat), 
+                      # levels = ABI_LEVELS)
 
 ending_with = function(.data, end_, ...) .data  %>% 
   dplyr::select(..., ends_with(end_)) %>%
@@ -26,7 +26,8 @@ ending_with = function(.data, end_, ...) .data  %>%
 data = inner_join(
   data %>% ending_with('.i', .imp, ocip, itb_cat, sex, p.cvd, p.frailty, p.hf,
                        age, men, p.smoking, bmi, sbp, dbp, pp, coltot, colldl, colhdl, tg, hba1c, glu,p.alcohol_high, p.alcohol_low,
-                       time_diab, p.b01aa, p.b01ab, p.b01ac, p.b01a_other, p.htn, p.aff, p.copd, p.ckd, p.neoplasms_malignant, p.dm_med, p.c03, p.c07, p.c08, p.c09, p.c02, 
+                       time_diab, p.b01aa, p.b01ab, p.b01ac, p.b01a_other, p.htn, p.aff, p.copd, p.ckd, p.neoplasms_malignant, p.dm_med,
+                       p.c03, p.c07, p.c08, p.c09, p.c02, 
                        p.statin, p.c10nostatin) %>% gather(variable, event, starts_with('d.')),
   data %>% ending_with('.t', .imp, ocip) %>% gather(variable, time, starts_with('d.')), 
   by = c('.imp', 'ocip', 'variable'))
@@ -50,11 +51,15 @@ library(parallel)
 CLUSTER = parallel::makeCluster(10)
 clusterEvalQ(CLUSTER, { library(survival) })
 
+data = data %>% mutate(p.diabetes = ifelse(time_diab!=0, 1, 0))
+data = data %>% mutate(p.c10=ifelse(p.c10nostatin == 1 | p.statin == 1, 1, 0))
+# Ajustem amb variables que em facilita la Lia en més de la cosa turbia que feia en Marc
 fb_cox = function(.data){
-  m0 = coxph(Surv(time, event)~itb_cat, data = .data)
-  MASS::stepAIC(m0, list(upper = ~itb_cat+age+men+p.smoking+bmi+sbp+dbp+pp+coltot+colldl+colhdl+p.b01aa+p.b01ab+p.b01ac+p.b01a_other+p.hf+ 
-                           tg+hba1c+glu+time_diab+p.htn+p.aff+p.copd+p.ckd+p.neoplasms_malignant+p.dm_med+p.c03+p.c07+p.c08+p.alcohol_high+p.alcohol_low+
-                           p.c09+p.c02+p.statin+p.c10nostatin, lower = ~itb_cat), k = log(nrow(.data)))
+  m0 = coxph(Surv(time, event)~itb_cat + age + p.smoking + p.alcohol_high + p.diabetes + p.htn + colldl + tg + p.ckd + 
+               p.c02 + p.c03 + p.c07 + p.c08 + p.c09 + p.c10, data = .data)
+  # MASS::stepAIC(m0, list(upper = ~itb_cat+age+men+p.smoking+bmi+sbp+dbp+pp+coltot+colldl+colhdl+p.b01aa+p.b01ab+p.b01ac+p.b01a_other+p.hf+ 
+  #                          tg+hba1c+glu+time_diab+p.htn+p.aff+p.copd+p.ckd+p.neoplasms_malignant+p.dm_med+p.c03+p.c07+p.c08+p.alcohol_high+
+  #                          p.alcohol_low+p.c09+p.c02+p.statin+p.c10nostatin, lower = ~itb_cat), k = log(nrow(.data)))
 }
 
 l_data = split(data, list(data$.imp, data$variable))

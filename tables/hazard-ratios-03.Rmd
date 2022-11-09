@@ -1,5 +1,5 @@
 ---
-title: "Hazard ratios adjusted by variables selected using forward-backward based on BIC criterion for `r GROUP` group"
+title: "Hazard ratios adjusted by variables given by Lia `r GROUP` group"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: 
   html_document: 

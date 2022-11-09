@@ -3,7 +3,7 @@ library(broom)
 library(stringr)
 library(mice)
 
-if(!exists('GROUP')) GROUP = 'CVD-no_DM2-no'
+if(!exists('GROUP')) GROUP = 'Men'
 
 source('R/global.R')
 

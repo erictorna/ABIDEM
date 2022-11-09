@@ -1,21 +1,21 @@
-ABI_LEVELS = c('[1.1,1.3)', '[0.4,0.5)', '[0.5,0.7)', '[0.7,0.9)', '[0.9,1.1)', '[1.3,3]')
+ABI_LEVELS = c('[0,0.5)', '[0.5,0.8)', '[0.8,0.9)', '[0.9,1.0)', '[1.0,1.4)', '[1.4,3]')
 ABI_LABELS = list(
-  '[0.4,0.5)' = "0.4 ≤ ABI < 0.5", 
-  '[0.5,0.7)' = "0.5 ≤ ABI < 0.7", 
-  '[0.7,0.9)' = "0.7 ≤ ABI < 0.9", 
-  '[0.9,1.1)' = "0.9 ≤ ABI < 1.1", 
-  '[1.1,1.3)' = "1.1 ≤ ABI < 1.3", 
-  '[1.3,3]' = "1.3 ≤ ABI < 3")
+  '[0,0.5)' = "0.0 ≤ ABI < 0.5", 
+  '[0.5,0.8)' = "0.5 ≤ ABI < 0.8", 
+  '[0.8,0.9)' = "0.8 ≤ ABI < 0.9", 
+  '[0.9,1.0)' = "0.9 ≤ ABI < 1.0", 
+  '[1.0,1.4)' = "1.0 ≤ ABI < 1.4", 
+  '[1.4,3]' = "1.4 ≤ ABI < 3")
 
 filter_group = function(.data, GROUP){
   if(GROUP == 'ALL'){
     return(.data)
   }
-  if(GROUP == 'CVD-yes_DM2-yes'){
-    return(filter(.data, p.cvd == 1 & p.diabetes == 1))
+  if(GROUP == 'Men'){
+    return(filter(.data, men == 1))
   }
-  if(GROUP == 'CVD-yes_DM2-no'){
-    return(filter(.data, p.cvd == 1 & p.diabetes == 0))
+  if(GROUP == 'Wom'){
+    return(filter(.data, men == 0))
   }
   .data %>%
     filter(group == GROUP)

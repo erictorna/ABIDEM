@@ -4,7 +4,7 @@ library(stringr)
 library(mice)
 library(survival)
 
-if(!exists('GROUP')) GROUP = 'CVD-no_DM2-no'
+if(!exists('GROUP')) GROUP = 'Men'
 
 source('R/global.R')
 
@@ -14,8 +14,8 @@ data = lapply(list.files('imputation/', pattern = 'ABIDEM-imp_*', full.names = T
 }) %>% bind_rows() %>% tbl_df() %>%
   filter_group(GROUP)
 
-data$itb_cat = factor(as.character(data$itb_cat), 
-                      levels = ABI_LEVELS)
+# data$itb_cat = factor(as.character(data$itb_cat), 
+                      # levels = ABI_LEVELS)
 
 ending_with = function(.data, end_, ...) .data  %>% 
   select(..., ends_with(end_)) %>%

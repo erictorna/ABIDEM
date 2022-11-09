@@ -7,4 +7,4 @@ TO_KEEP = $(foreach imp,$(shell seq 1 $(NIMP)),$(shell printf 'data/imputation-p
 RMD2HTML=R/run-knit2html.R
 INDEX=www/index.html
 
-GROUPS = ALL CVD-no_DM2-no CVD-no_DM2-yes 
+GROUPS = ALL Men Wom
