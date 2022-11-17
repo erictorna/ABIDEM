@@ -13,7 +13,7 @@ D.imp = list('men-diab-yes' = filter(maria.imp, DIAB == 1 & men == 1 ),
 
 getPredictionMatrix = function(.data){
   set.seed(1)
-  .data = .data %>% sample_n(min(5000, nrow(.data)))
+  .data = .data %>% sample_n(min(3400, nrow(.data)))
   X = .data %>% select_('age', 'itb', 'men', ~starts_with('m.'), ~starts_with('p.'))
   if( sum(is.na(.data$time_diab)) == 0 ){
     X = .data %>% select_('age', 'itb', 'men', 'time_diab', ~starts_with('m.'), ~starts_with('p.'))
@@ -61,11 +61,11 @@ getPredictionMatrix = function(.data){
     'height' = c('weight', "ln_pp", "ln_sbp", "ln_coltot", "ln_colhdl", "ln_colldl", "ln_tg", "ln_glu", "hba1c"),
     "ln_pp" = c('weight', 'height', "ln_sbp", "ln_coltot", "ln_colhdl", "ln_colldl", "ln_tg", "ln_glu", "hba1c"),
     "ln_sbp" = c('weight', 'height', "ln_pp", "ln_coltot", "ln_colhdl", "ln_colldl", "ln_tg", "ln_glu", "hba1c"),
-    "ln_coltot" = c('weight', 'height', "ln_pp", "ln_sbp", "ln_colhdl", "ln_colldl", "ln_glu", "hba1c"),
-    "ln_colhdl" = c('weight', 'height', "ln_pp", "ln_sbp", "ln_coltot", "ln_colldl", "ln_glu", "hba1c"),
-    "ln_colldl" = c('weight', 'height', "ln_pp", "ln_sbp", "ln_coltot", "ln_colhdl", "ln_glu", "hba1c"),
-    "ln_tg" = c('weight', 'height', "ln_pp", "ln_sbp", "ln_coltot", "ln_colhdl", "ln_glu", "hba1c"),
-    "ln_glu" = c('weight', 'height', "ln_pp", "ln_sbp", "ln_coltot", "ln_colhdl", "hba1c"),
+    "ln_coltot" = c('weight', 'height', "ln_pp", "ln_sbp", "ln_colhdl", "ln_colldl", "ln_tg", "ln_glu", "hba1c"),
+    "ln_colhdl" = c('weight', 'height', "ln_pp", "ln_sbp", "ln_coltot", "ln_colldl", "ln_tg", "ln_glu", "hba1c"),
+    "ln_colldl" = c('weight', 'height', "ln_pp", "ln_sbp", "ln_coltot", "ln_colhdl", "ln_tg", "ln_glu", "hba1c"),
+    "ln_tg" = c('weight', 'height', "ln_pp", "ln_sbp", "ln_coltot", "ln_colhdl", "ln_colldl", "ln_glu", "hba1c"),
+    "ln_glu" = c('weight', 'height', "ln_pp", "ln_sbp", "ln_coltot", "ln_colhdl", "ln_colldl", "ln_tg", "hba1c"),
     "hba1c" = c('weight', 'height', "ln_pp", "ln_sbp", "ln_coltot", "ln_colhdl", "ln_colldl", "ln_tg", "ln_glu"))
   
   
@@ -77,6 +77,7 @@ getPredictionMatrix = function(.data){
   }
   predictionMatrix
 }
+
 
 predictionMatrices = lapply(D.imp, getPredictionMatrix)
 

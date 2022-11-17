@@ -20,6 +20,7 @@ knitr::opts_chunk$set(echo = FALSE)
 ```{r}
 global = global.mi
 itb_cat = itb_cat.mi
+age_cat = age_cat.mi
 ```
 
 ```{r child = 'incidences_01.Rmd'}
@@ -30,6 +31,7 @@ itb_cat = itb_cat.mi
 ```{r}
 global = global.cc
 itb_cat = itb_cat.cc
+age_cat = age_cat.cc
 ```
 
 ```{r child = 'incidences_01.Rmd'}

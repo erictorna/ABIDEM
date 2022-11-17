@@ -10,10 +10,14 @@ editor_options:
   chunk_output_type: console
 ---
 
+* Adjusted by: itb_cat + p.smoking + p.alcohol_high + p.diabetes + p.htn + p.dm_med + colldl + tg + p.ckd + 
+               p.c02 + p.c03 + p.c07 + p.c08 + p.c09 + p.c10 + p.n06 + pspline(age, df=0)
+               
 ```{r setup, include=FALSE}
 library(knitr)
 library(dplyr)
 library(huxtable)
+library(data.table)
 load(sprintf('hazard-ratios-03_%s.RData', GROUP))
 knitr::opts_chunk$set(echo = FALSE, error = TRUE)
 options(huxtable.knit_print_df = FALSE)
@@ -47,12 +51,12 @@ global.mi %>%
   mutate(haz = exp(estimate),
          lo = exp(estimate - 1.96 * std.error),
          hi = exp(estimate + 1.96 * std.error),
-         term = gsub('itb_cat', '', rowname)) %>%
+         term = sub('itb_cat', '', term...2)) %>%
   select(outcome = variable, term, haz, lo, hi, p.value, fmi) %>%
   left_join(prop.mi, by = c('outcome', 'term')) %>%
   as_huxtable(add_colnames = TRUE) %>%
   set_align('right') %>%
-  set_align(col = 1:2, row = every(),'left') %>%
+  # set_align(col = 1:2, row = every(),'left') %>%
   map_text_color(everywhere, c(6,8), 
         by_ranges(c(0.05), c("red", "black"))
       ) %>%
@@ -71,7 +75,7 @@ global.cc %>%
   left_join(prop.cc, by = c('outcome', 'term')) %>%
   as_huxtable(add_colnames = TRUE) %>%
   set_align('right') %>%
-  set_align(col = 1:2, row = every(),'left')  %>%
+  # set_align(col = 1:2, row = every(),'left')  %>%
   map_text_color(everywhere, c(6,7), 
         by_ranges(c(0.05), c("red", "black"))
       ) %>%
@@ -84,7 +88,7 @@ global.cc %>%
 itb_sex_interactions %>%
   as_huxtable(add_colnames = TRUE) %>%
   set_align('right') %>%
-  set_align(col = 1:2, row = every(),'left')  %>%
+  # set_align(col = 1:2, row = every(),'left')  %>%
   map_text_color(everywhere, c(3), 
         by_ranges(c(0.05), c("red", "black"))
       ) %>%
@@ -100,17 +104,30 @@ sex.mi %>%
   mutate(haz = exp(estimate),
          lo = exp(estimate - 1.96 * std.error),
          hi = exp(estimate + 1.96 * std.error),
-         term = gsub('itb_cat', '', rowname)) %>%
-  select(outcome = variable, sex, term, haz, lo, hi, p.value, fmi)
+         term = gsub('itb_cat', '', term...2)) %>%
+  select(outcome = variable, sex, term, haz, lo, hi, p.value, fmi) %>% 
+  as_huxtable(add_colnames=TRUE) %>% 
+  set_align('right') %>% 
+  map_text_color(everywhere, c(7),
+                 by_ranges(c(0.05), c('red', 'black'))
+                 ) %>% 
+  theme_plain()
 ```
 
 ## Complete-case descriptives
 
 ```{r}
+setDT(sex.cc)
 sex.cc %>%
   mutate(haz = exp(estimate),
          lo = exp(estimate - 1.96 * std.error),
          hi = exp(estimate + 1.96 * std.error),
          term = gsub('itb_cat', '', term)) %>%
-  select(outcome = variable, sex, term, haz, lo, hi, p.value)
+  select(outcome = variable, sex, term, haz, lo, hi, p.value) %>% 
+  as_huxtable(add_colnames=TRUE) %>% 
+  set_align('right') %>% 
+  map_text_color(everywhere, c(7),
+                 by_ranges(c(0.05), c('red', 'black'))
+                 ) %>% 
+  theme_plain()
 ```

@@ -24,3 +24,19 @@ itb_cat$numeric
 ```{r}
 itb_cat$dichotomic
 ```
+
+## By AGE categories
+
+* Numeric
+
+```{r}
+age_cat$age<-NULL
+age_cat$numeric
+```
+
+* Dichotomic
+
+```{r}
+age_cat$age<-NULL
+age_cat$dichotomic
+```

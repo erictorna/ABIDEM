@@ -89,13 +89,13 @@ load('data/dementia_ani.RData')
 problems = problems %>%
   filter(disease != 'dementia') %>%
   bind_rows(dementia_global %>% mutate(source = 'ecap', field = 'ecap', disease = 'dementia') %>% 
-              select(ocip, date = dalta, source, field, icd, disease)) %>%
+              select(ocip, date = dalta, source, field, disease)) %>%
   bind_rows(dementia_alzheimer %>% mutate(source = 'ecap', field = 'ecap', disease = 'dementia_alzheimer') %>% 
-              select(ocip, date = dalta, source, field, icd, disease)) %>%
+              select(ocip, date = dalta, source, field, disease)) %>%
   bind_rows(dementia_vascular %>% mutate(source = 'ecap', field = 'ecap', disease = 'dementia_vascular') %>% 
-              select(ocip, date = dalta, source, field, icd, disease)) %>%
-  bind_rows(dementia_unspecified %>% mutate(source = 'ecap', field = 'ecap', disease = 'dementia_unspecified') %>% 
-              select(ocip, date = dalta, source, field, icd, disease))
+              select(ocip, date = dalta, source, field, disease)) #%>%
+  # bind_rows(dementia_unspecified %>% mutate(source = 'ecap', field = 'ecap', disease = 'dementia_unspecified') %>% 
+  #             select(ocip, date = dalta, source, field, icd, disease))
 
 # EXPOSURE VARIABLES
 maria = maria %>%
@@ -132,6 +132,7 @@ maria = maria %>%
     p.ckd = as.integer(!is.na(ckd) & ckd <= dintro),
     p.copd = as.integer(!is.na(copd) & copd <= dintro),
     p.hypothyroidism = as.integer(!is.na(hypothyroidism) & hypothyroidism <= dintro),
+    # p.hyperthyroidism = as.integer(!is.na(hyperthyroidism) & hyperthyroidism <= dintro),
     p.a10 = as.integer(!is.na(a10) & dintro - 365 < a10 & a10 <= dintro),
     p.c02 = as.integer(!is.na(c02) & dintro - 365 < c02 & c02 <= dintro),             
     p.c03 = as.integer(!is.na(c03) & dintro - 365 < c03 & c03 <= dintro),
@@ -188,7 +189,7 @@ maria = maria %>%
   left_join(df_incidence(EVENT = 'dementia'), by  = 'ocip') %>% mutate(d.dementia.i = as.numeric(!is.na(d.dementia))) %>%
   left_join(df_incidence(EVENT = 'dementia_alzheimer'), by  = 'ocip') %>% mutate(d.dementia_alzheimer.i = as.numeric(!is.na(d.dementia_alzheimer))) %>%
   left_join(df_incidence(EVENT = 'dementia_vascular'), by  = 'ocip') %>% mutate(d.dementia_vascular.i = as.numeric(!is.na(d.dementia_vascular))) %>%
-  left_join(df_incidence(EVENT = 'dementia_unspecified'), by  = 'ocip') %>% mutate(d.dementia_unspecified.i = as.numeric(!is.na(d.dementia_unspecified))) %>%
+  # left_join(df_incidence(EVENT = 'dementia_unspecified'), by  = 'ocip') %>% mutate(d.dementia_unspecified.i = as.numeric(!is.na(d.dementia_unspecified))) %>%
   # left_join(df_incidence(EVENT = 'stroke'), by = 'ocip') %>% mutate(d.stroke.i = as.numeric(!is.na(d.stroke))) %>%
   #left_join(df_incidence(EVENT = 'nephropathy'), by = 'ocip') %>% mutate(d.nephropathy.i = as.numeric(!is.na(d.nephropathy))) %>%
   #left_join(df_incidence(EVENT = 'retinopathy'), by = 'ocip') %>% mutate(d.retinopathy.i = as.numeric(!is.na(d.retinopathy))) %>%
@@ -204,8 +205,8 @@ maria = maria %>%
     # d.stroke_i.t = as.numeric(if_else(d.stroke_i.i == 1, d.stroke_i, dexitus) - dintro)/365.25,
     d.dementia.t = as.numeric(if_else(d.dementia.i == 1, d.dementia, dexitus) - dintro)/365.25,
     d.dementia_alzheimer.t = as.numeric(if_else(d.dementia_alzheimer.i == 1, d.dementia_alzheimer, dexitus) - dintro)/365.25,
-    d.dementia_vascular.t = as.numeric(if_else(d.dementia_vascular.i == 1, d.dementia_vascular, dexitus) - dintro)/365.25,
-    d.dementia_unspecified.t = as.numeric(if_else(d.dementia_unspecified.i == 1, d.dementia_unspecified, dexitus) - dintro)/365.25
+    d.dementia_vascular.t = as.numeric(if_else(d.dementia_vascular.i == 1, d.dementia_vascular, dexitus) - dintro)/365.25
+    # d.dementia_unspecified.t = as.numeric(if_else(d.dementia_unspecified.i == 1, d.dementia_unspecified, dexitus) - dintro)/365.25
     # d.stroke.t = as.numeric(if_else(d.stroke.i == 1, d.stroke, dexitus) - dintro)/365.25
     #d.nephropathy.t = as.numeric(if_else(d.nephropathy.i == 1, d.nephropathy, dexitus) - dintro)/365.25,
     #d.retinopathy.t = as.numeric(if_else(d.retinopathy.i == 1, d.retinopathy, dexitus) - dintro)/365.25,
@@ -244,7 +245,11 @@ maria <-maria %>%
 
 # Categories ABI
 maria = maria %>%
-  mutate(itb_cat = cut(itb, breaks = c(0.0,0.5,0.8,0.9,1.0,1.4,3), include.lowest = T, right = F))
+  mutate(itb_cat = cut(itb, breaks = c(0.0,0.8,0.9,1.0,1.4,3), include.lowest = T, right = F))
+maria$itb_cat <- factor(maria$itb_cat, levels = c('[1,1.4)','[0,0.8)','[0.8,0.9)','[0.9,1)','[1.4,3]'))
+
+maria = maria %>% 
+  mutate(age_cat = cut(age, breaks = c(35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 200), include.lowest = T, right = F))
 
 library(lubridate)
 # Temps fins a diabetes

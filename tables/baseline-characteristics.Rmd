@@ -19,6 +19,7 @@ knitr::opts_chunk$set(echo = FALSE)
 ```{r}
 global = global.raw
 itb_cat = itb_cat.raw
+age_cat = age_cat.raw
 ```
 
 ```{r child = 'baseline-characteristics_01.Rmd'}
@@ -29,6 +30,7 @@ itb_cat = itb_cat.raw
 ```{r}
 global = global.imp
 itb_cat = itb_cat.imp
+age_cat = age_cat.imp
 ```
 
 ```{r child = 'baseline-characteristics_01.Rmd'}
@@ -39,6 +41,7 @@ itb_cat = itb_cat.imp
 ```{r}
 global = global.cc
 itb_cat = itb_cat.cc
+age_cat = age_cat.cc
 ```
 
 ```{r child = 'baseline-characteristics_01.Rmd'}

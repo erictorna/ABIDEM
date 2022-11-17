@@ -13,14 +13,7 @@ GROUPS = scan(text = grep("GROUPS = ", readLines('global.make'), value = TRUE), 
 * Imputation process summary [[html]](imputation-process.html)
 * Baseline characteristics: `r sprintf("[%s](table-baseline-characteristics_%s.html)", GROUPS, GROUPS)`
 * Incidences: `r sprintf("[%s](table-incidences_%s.html)", GROUPS, GROUPS)`
-* Cumulative incidences: `r sprintf("[%s](figure-cumulative-incidences_%s.html)", GROUPS, GROUPS)`
 * Unadjusted hazard ratios: `r sprintf("[%s](table-hazard-ratios_%s.html)", GROUPS, GROUPS)`
-    * Hazard ratios adjusted by regicor variables: `r sprintf("[%s](table-hazard-ratios-01_%s.html)", GROUPS, GROUPS)`
-    * Hazard ratios adjusted by variables selected using forward-backward based on BIC criterion: `r sprintf("[%s](table-hazard-ratios-03_%s.html)", GROUPS, GROUPS)`
-    * Hazard ratios __using 3 categories__ adjusted by variables selected using forward-backward based on BIC criterion:  `r sprintf("[%s](table-hazard-ratios-03-3_categories_%s.html)", GROUPS, GROUPS)`
-* Hazard ratios forest plots: `r sprintf("[%s](figure-hazard-ratios_%s.html)", GROUPS, GROUPS)`
+    * Hazard ratios adjusted by variables selected by Lia: `r sprintf("[%s](table-hazard-ratios-03_%s.html)", GROUPS, GROUPS)`
 
-* Smoothened hazard ratios: `r sprintf("[%s](figure-smoothened-hazard-ratios_%s.html)", GROUPS, GROUPS)`
-    * Reference at ABI=1.2:  `r sprintf("[%s](figure-smoothened-hazard-ratios_12_%s.html)", GROUPS, GROUPS)`
-    * Reference at ABI=1.2 (Complete-case):  `r sprintf("[%s](figure-smoothened-hazard-ratios-cc_12_%s.html)", GROUPS, GROUPS)`
 

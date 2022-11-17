@@ -26,7 +26,7 @@ global.mi %>%
   mutate(haz = exp(estimate),
          lo = exp(estimate - 1.96 * std.error),
          hi = exp(estimate + 1.96 * std.error),
-         term = gsub('itb_cat', '', rowname)) %>%
+         term = gsub('itb_cat', '', term)) %>%
   select(outcome = variable, term, haz, lo, hi, p.value, fmi)
 ```
 
@@ -46,21 +46,26 @@ global.cc %>%
 ## Multiple-imputed descriptives
 
 ```{r}
-sex.mi %>%
+if (GROUP=='ALL') {
+  sex.mi %>%
   mutate(haz = exp(estimate),
          lo = exp(estimate - 1.96 * std.error),
          hi = exp(estimate + 1.96 * std.error),
-         term = gsub('itb_cat', '', rowname)) %>%
-  select(outcome = variable, sex, term, haz, lo, hi, p.value, fmi)
+         term = gsub('itb_cat', '', term)) %>%
+  select(outcome = variable, sex, term, haz, lo, hi, p.value, fmi) 
+}
 ```
 
 ## Complete-case descriptives
 
 ```{r}
-sex.cc %>%
+if (GROUP == 'ALL') {
+  sex.cc %>%
   mutate(haz = exp(estimate),
          lo = exp(estimate - 1.96 * std.error),
          hi = exp(estimate + 1.96 * std.error),
          term = gsub('itb_cat', '', term)) %>%
   select(outcome = variable, sex, term, haz, lo, hi, p.value)
+}
+
 ```

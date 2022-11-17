@@ -70,12 +70,15 @@ data.imp = filter(data, .imp > 0)
 
 global.raw = describe(data.raw)
 itb_cat.raw = describe(data.raw, itb_cat)
+age_cat.raw = describe(data.raw, age_cat)
 
 global.cc = describe(data.cc)
 itb_cat.cc = describe(data.cc, itb_cat)
+age_cat.cc = describe(data.cc, age_cat)
 
 global.imp = describe(data.imp)
 itb_cat.imp = describe(data.imp, itb_cat)
+age_cat.imp = describe(data.imp, age_cat)
 
 rm(data, data.cc, data.imp, data.raw, maria)
 

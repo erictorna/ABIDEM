@@ -11,3 +11,11 @@ global %>%
 itb_cat %>%
   select(outcome = variable, itb_cat, n, events, ends_with('_time'), inc, inc.lo, inc.hi)
 ```
+
+## By AGE categories
+
+```{r}
+age_cat %>%
+  select(outcome = variable, age_cat, n, events, ends_with('_time'), inc, inc.lo, inc.hi)
+```
+

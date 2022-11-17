@@ -19,17 +19,17 @@ dementia_vascular = dementia_vascular %>%
   group_by(ocip) %>%
   summarise(dementia_vascular = min(dalta))
 
-dementia_unspecified = dementia_unspecified %>%
-  filter(ocip %in% maria$ocip) %>%
-  group_by(ocip) %>%
-  summarise(dementia_unspecified = min(dalta))
+# dementia_unspecified = dementia_unspecified %>%
+#   filter(ocip %in% maria$ocip) %>%
+#   group_by(ocip) %>%
+#   summarise(dementia_unspecified = min(dalta))
 
 
 maria = maria %>%
   left_join(dementia_global, by = 'ocip') %>%
   left_join(dementia_alzheimer, by = 'ocip') %>%
   left_join(dementia_vascular, by = 'ocip') %>%
-  left_join(dementia_unspecified, by = 'ocip') %>%
+  # left_join(dementia_unspecified, by = 'ocip') %>%
   mutate(
     dementia_old = dementia,
     dementia = dementia_global

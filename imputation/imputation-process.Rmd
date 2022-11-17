@@ -35,7 +35,7 @@ NITER = as.numeric(sub(pat, "\\1", grep(pat, lns, value = TRUE)))
 
 ```{r, results='asis', eval=FALSE}
 # pred = predictionMatrices$all
-pred = rbind(predictionMatrices$`diab-yes`, predictionMatrices$`diab-no`)
+pred = rbind(predictionMatrices$`men-diab-yes`, predictionMatrices$`wom-diab-yes`, predictionMatrices$`men-diab-no`, predictionMatrices$`wom-diab-no`)
 v = apply(pred, 1, function(row) paste(names(row)[row == 1], collapse=', '))
 for(i in seq_along(v)){
   if(v[i] != ""){
@@ -62,22 +62,34 @@ tab = lapply(predictionMatrices, function(pred){
 })
 ```
 
-* Diabetic population
+* Diabetic population Men
 
 ```{r}
-tab$`diab-yes`
+tab$`men-diab-yes`
 ```
 
-* Non-diabetic population
+* Diabetic population Wom
 
 ```{r}
-tab$`diab-no`
+tab$`wom-diab-yes`
+```
+
+* Non-diabetic population Men
+
+```{r}
+tab$`men-diab-no`
+```
+
+* Non-diabetic population Wom
+
+```{r}
+tab$`wom-diab-no`
 ```
 
 
 ```{r, eval=FALSE}
 # X = predictionMatrices$all 
-X = rbind(predictionMatrices$`diab-yes`, predictionMatrices$`diab-no`)
+X = rbind(predictionMatrices$`men-diab-yes`, predictionMatrices$`wom-diab-yes`, predictionMatrices$`men-diab-no`, predictionMatrices$`wom-diab-no`)
 X[X==1] = 'x'
 X[X==0] = ''
 df = as.data.table(X, keep.rownames = TRUE)

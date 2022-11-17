@@ -78,5 +78,11 @@ maria = maria %>%
     p.b01a_other = as.integer(ocip %in% b01a_other$ocip)
   )
 
-
+# Algunes variables modificades per l'article de la Lia
+maria = maria %>% mutate(p.c10 = ifelse(p.statin == 1 | p.c10nostatin == 1, 1, 0))
+maria$p.statin<-NULL
+maria$p.c10nostatin<-NULL
+library(data.table)
+setDT(maria)
+maria=maria[maria$age>=65]
 save(maria, file = 'data/03-extra_variables.RData')

@@ -19,7 +19,7 @@ vrs <- c("ocip", "DIAB", "age", "itb", "weight", "height", "ln_sbp", "ln_pp","ln
          "p.arthritis", "p.asthma", "p.copd", "p.aff", "p.neoplasms_malignant", "p.ckd",  "p.cvd",
          "p.hypothyroidism", "p.ami", "p.angor", "p.tia", "p.stroke", 
          "p.a10", "p.c02", "p.c03", "p.c07", "p.c08", "p.alcohol_high", "p.alcohol_low",
-         "p.c09", "p.h02", "p.n05", "p.n06", "p.statin", "p.c10nostatin", "p.aspirin",
+         "p.c09", "p.h02", "p.n05", "p.n06", "p.c10", "p.aspirin",
          "event", "na.event", "exitusT", "exitusD")
 
 maria.imp = maria.imp %>%

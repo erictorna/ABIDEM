@@ -18,7 +18,7 @@ ending_with = function(.data, end_, ...) .data  %>%
   rename_at(vars(ends_with(end_)), function(x) str_sub(x, end = -1-nchar(end_)))
 
 data = inner_join(
-  data %>% ending_with('.i', .imp, ocip, itb_cat) %>% gather(variable, event, starts_with('d.')),
+  data %>% ending_with('.i', .imp, ocip, itb_cat, age_cat) %>% gather(variable, event, starts_with('d.')),
   data %>% ending_with('.t', .imp, ocip) %>% gather(variable, time, starts_with('d.')), 
   by = c('.imp', 'ocip', 'variable'))
 
@@ -79,6 +79,8 @@ data.imp = filter(data, .imp != 0)
 
 global.mi = incidences(data.imp)
 itb_cat.mi = incidences(data.imp, itb_cat)
+age_cat.mi = incidences(data.imp, age_cat)
+age_itb_cat.mi = incidences(data.imp, itb_cat, age_cat)
 
 data.cc = filter(data, .imp == 0)
 
@@ -86,6 +88,8 @@ global.cc = incidences(data.cc)
 global.cc$m<-NULL
 itb_cat.cc = incidences(data.cc, itb_cat)
 itb_cat.cc$m<-NULL
+age_cat.cc = incidences(data.cc, age_cat)
+age_cat.cc$m<-NULL
 rm(data, data.imp, data.cc, ending_with)
 
 save.image(file = sprintf('tables/incidences_%s.RData', GROUP))
