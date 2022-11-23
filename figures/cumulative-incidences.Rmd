@@ -32,7 +32,7 @@ for(outcome in OUTCOMES){
     mutate(strata = gsub('itb_cat=', '', strata)) %>%
     filter(variable == outcome)
   p = ggplot(data = dplot) +
-    geom_stepribbon(aes(x = time, ymin = 1-conf.low, ymax = 1-conf.high, fill = strata), col = NA, alpha = 0.15) + 
+    geom_stepribbon(aes(x = time, ymin = 1-conf.low, ymax = 1-conf.high, y = 1-estimate, fill = strata), col = NA, alpha = 0.25) + 
     geom_step(aes(x = time, y = 1-estimate, col = strata)) +
     labs(title = sprintf('Outcome %s', outcome), x = 'Time', y = 'Cumulative incidence', fill = 'ABI \ncategories', col = 'ABI \ncategories')
   print(p)
@@ -44,11 +44,12 @@ for(outcome in OUTCOMES){
 ```{r, fig.width=6.5, heighth = 5.5, out.width='100%'}
 for(outcome in OUTCOMES){
   dplot = global.cc %>%
-    mutate(strata = gsub('itb_cat=', '', strata)) %>%
+    mutate(strata = gsub('itb_cat=', '', strata)) %>% 
     filter(variable == outcome)
   p = ggplot(data = dplot) +
-    geom_stepribbon(aes(x = time, ymin = 1-conf.low, ymax = 1-conf.high, fill = strata), col = NA, alpha = 0.15) + 
-    geom_step(aes(x = time, y = 1-estimate, col = strata))
+    geom_stepribbon(aes(x = time, ymin = 1-conf.low, ymax = 1-conf.high, y = 1-estimate, fill = strata), col = NA, alpha = 0.25) + 
+    geom_step(aes(x = time, y = 1-estimate, col = strata)) +
+    labs(title = sprintf('Outcome %s', outcome), x = 'Time', y = 'Cumulative incidence', fill = 'ABI \ncategories', col = 'ABI \ncategories')
   print(p)
 }
 ```

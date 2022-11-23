@@ -13,6 +13,7 @@ GROUPS = scan(text = grep("GROUPS = ", readLines('global.make'), value = TRUE), 
 * Imputation process summary [[html]](imputation-process.html)
 * Baseline characteristics: `r sprintf("[%s](table-baseline-characteristics_%s.html)", GROUPS, GROUPS)`
 * Incidences: `r sprintf("[%s](table-incidences_%s.html)", GROUPS, GROUPS)`
+* Cumulative incidences: `r sprintf("[%s](figure-cumulative-incidences_%s.html)", GROUPS, GROUPS)`
 * Unadjusted hazard ratios: `r sprintf("[%s](table-hazard-ratios_%s.html)", GROUPS, GROUPS)`
     * Hazard ratios adjusted by variables selected by Lia: `r sprintf("[%s](table-hazard-ratios-03_%s.html)", GROUPS, GROUPS)`
 
