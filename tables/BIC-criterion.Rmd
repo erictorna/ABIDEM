@@ -1,0 +1,116 @@
+---
+title: "Hazard ratios adjusted by variables selected using forward-backward based on BIC criterion for `r GROUP` group"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  html_document: 
+    df_print: kable
+    toc: yes
+    toc_float: true
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+library(dplyr)
+library(huxtable)
+load(sprintf('BIC-criterion_%s.RData', GROUP))
+knitr::opts_chunk$set(echo = FALSE, error = TRUE)
+options(huxtable.knit_print_df = FALSE)
+```
+
+# Results for all population
+
+```{r}
+prop.cc = proportionality %>% 
+  filter(imp == 0) %>%
+  mutate(
+    outcome = paste0('d.', outcome),
+    term = sub('itb_cat','', rowname)) %>%
+  select(outcome, term, prop = p)
+
+prop.mi = proportionality %>% 
+  filter(imp > 0) %>%
+  mutate(
+    outcome = paste0('d.', outcome),
+    term = sub('itb_cat','', rowname)) %>%
+  group_by(outcome, term) %>%
+  summarise(p = median(p)) %>%
+  select(outcome, term, prop = p) %>%
+  ungroup()
+```
+
+## Multiple-imputed descriptives
+
+```{r}
+global.mi %>%
+  mutate(haz = exp(estimate),
+         lo = exp(estimate - 1.96 * std.error),
+         hi = exp(estimate + 1.96 * std.error),
+         term = gsub('itb_cat', '', rowname)) %>%
+  select(outcome = variable, term, haz, lo, hi, p.value, fmi) %>%
+  left_join(prop.mi, by = c('outcome', 'term')) %>%
+  as_huxtable(add_colnames = TRUE) %>%
+  set_align('right') %>%
+  # set_align(col = 1:2, row = every(),'left') %>%
+  map_text_color(everywhere, c(6,8), 
+        by_ranges(c(0.05), c("red", "black"))
+      ) %>%
+  theme_plain() 
+```
+
+## Complete-case descriptives
+
+```{r}
+global.cc %>%
+  mutate(haz = exp(estimate),
+         lo = exp(estimate - 1.96 * std.error),
+         hi = exp(estimate + 1.96 * std.error),
+         term = gsub('itb_cat', '', term)) %>%
+  select(outcome = variable, term, haz, lo, hi, p.value) %>%
+  left_join(prop.cc, by = c('outcome', 'term')) %>%
+  as_huxtable(add_colnames = TRUE) %>%
+  set_align('right') %>%
+  # set_align(col = 1:2, row = every(),'left')  %>%
+  map_text_color(everywhere, c(6,7), 
+        by_ranges(c(0.05), c("red", "black"))
+      ) %>%
+  theme_plain() 
+```
+
+## Interaction between ABI and Sex 
+
+```{r}
+itb_sex_interactions %>%
+  as_huxtable(add_colnames = TRUE) %>%
+  set_align('right') %>%
+  # set_align(col = 1:2, row = every(),'left')  %>%
+  map_text_color(everywhere, c(3), 
+        by_ranges(c(0.05), c("red", "black"))
+      ) %>%
+  theme_plain() 
+```
+
+# Results by sex
+
+## Multiple-imputed descriptives
+
+```{r}
+sex.mi %>%
+  mutate(haz = exp(estimate),
+         lo = exp(estimate - 1.96 * std.error),
+         hi = exp(estimate + 1.96 * std.error),
+         term = gsub('itb_cat', '', rowname)) %>%
+  select(outcome = variable, sex, term, haz, lo, hi, p.value, fmi)
+```
+
+## Complete-case descriptives
+
+```{r}
+sex.cc %>%
+  mutate(haz = exp(estimate),
+         lo = exp(estimate - 1.96 * std.error),
+         hi = exp(estimate + 1.96 * std.error),
+         term = gsub('itb_cat', '', term)) %>%
+  select(outcome = variable, sex, term, haz, lo, hi, p.value)
+```

@@ -245,8 +245,8 @@ maria <-maria %>%
 
 # Categories ABI
 maria = maria %>%
-  mutate(itb_cat = cut(itb, breaks = c(0.0,0.8,0.9,1.0,1.4,3), include.lowest = T, right = F))
-maria$itb_cat <- factor(maria$itb_cat, levels = c('[1,1.4)','[0,0.8)','[0.8,0.9)','[0.9,1)','[1.4,3]'))
+  mutate(itb_cat = cut(itb, breaks = c(0.0, 0.4, 0.5, 0.7, 0.9, 1.1, 1.3, 3), include.lowest = T, right = F))
+maria$itb_cat <- factor(maria$itb_cat, levels = c('[1.1,1.3)', '[0.4,0.5)', '[0.5,0.7)', '[0.7,0.9)', '[0.9,1.1)', '[1.3,3]'))
 
 maria = maria %>% 
   mutate(age_cat = cut(age, breaks = c(35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 200), include.lowest = T, right = F))

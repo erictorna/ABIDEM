@@ -84,5 +84,5 @@ maria$p.statin<-NULL
 maria$p.c10nostatin<-NULL
 library(data.table)
 setDT(maria)
-maria=maria[maria$age>=65]
+maria=maria[maria$age>=50]
 save(maria, file = 'data/03-extra_variables.RData')

@@ -1,6 +1,6 @@
 include global.make
 
-TABLES = baseline-characteristics incidences hazard-ratios hazard-ratios-03
+TABLES = baseline-characteristics incidences hazard-ratios hazard-ratios-03 BIC-criterion
 
 RDATA = $(foreach group,$(GROUPS),$(foreach table,$(TABLES),$(shell printf 'tables/%s_%s.RData' $(table) $(group))))
 RMD = $(foreach group,$(GROUPS),$(foreach table,$(TABLES),$(shell printf 'www/table-%s_%s.html' $(table) $(group))))

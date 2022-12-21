@@ -16,5 +16,6 @@ GROUPS = scan(text = grep("GROUPS = ", readLines('global.make'), value = TRUE), 
 * Cumulative incidences: `r sprintf("[%s](figure-cumulative-incidences_%s.html)", GROUPS, GROUPS)`
 * Unadjusted hazard ratios: `r sprintf("[%s](table-hazard-ratios_%s.html)", GROUPS, GROUPS)`
     * Hazard ratios adjusted by variables selected by Lia: `r sprintf("[%s](table-hazard-ratios-03_%s.html)", GROUPS, GROUPS)`
+    * Hazard ratios adjusted by variables selected using forward-backward based on BIC criterion: `r sprintf("[%s](table-BIC-criterion_%s.html)", GROUPS, GROUPS)`
 
 

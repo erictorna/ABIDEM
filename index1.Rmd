@@ -1,0 +1,14 @@
+---
+title: "Index"
+output: html_document
+---
+
+# ABIDEM nou
+
+* Base [[20221111]](20221111/index.html)
+
+* Eliminat hyperthyroidisme + ajuntat grups petits itb [[20221114]](20221114/index.html)
+
+* Noves definicions de demencia by Jordi [[20221116]](20221116/index.html)
+
+* Nova versio buscant replicar resultats anteriors [[20221220]](20221220/index.html)
