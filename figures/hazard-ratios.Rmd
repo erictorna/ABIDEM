@@ -25,12 +25,13 @@ METHODS = names(HRs.mi)
 # Summary
 
 ```{r, fig.width=8.8, fig.height=6, warning=FALSE}
-dplot = bind_rows(lapply(HRs.mi, first), .id = 'method') %>%
-  filter(substr(rowname, 1, 7) == 'itb_cat') %>%
+dplot = bind_rows(lapply(HRs.mi, first), .id = 'method')
+dplot = dplot %>% mutate(term = ifelse(is.na(term...2), as.character(term), as.character(term...2))) %>% 
+  filter(substr(term, 1, 7) == 'itb_cat') %>%
   transmute(
     method = factor(method, levels = METHODS),
     outcome = variable,
-    abi = gsub('itb_cat', '', rowname),
+    abi = gsub('itb_cat', '', term),
     haz = exp(estimate),
     lo = exp(estimate - 1.96 * std.error),
     hi = exp(estimate + 1.96 * std.error)
@@ -56,78 +57,12 @@ ggplot(data = dplot) +
 mi = HRs.mi$Unadjusted$global
 ```
 
-```{r, ref.label='mi_figure', fig.width=6.6, fig.height=5}
-```
-
-## Regicor variables
-
-```{r}
-mi = HRs.mi$`Regicor variables`$global
-```
-
-```{r, ref.label='mi_figure', fig.width=6.6, fig.height=5}
-```
-
-```{r, ref.label='mi_adjusting', results='asis', warning=FALSE}
-```
-
-## BIC criterion
-
-```{r}
-mi = HRs.mi$`BIC criterion`$global
-```
-
-```{r, ref.label='mi_figure', fig.width=6.6, fig.height=5}
-```
-
-```{r, ref.label='mi_adjusting', results='asis', warning=FALSE}
-```
-
-
-# Complete-case
-
-## Unadjusted
-
-```{r}
-cc = HRs.cc$Unadjusted$global
-```
-
-```{r, ref.label='cc_figure'}
-```
-
-## Regicor variables
-
-```{r}
-cc = HRs.cc$`Regicor variables`$global
-```
-
-```{r, ref.label='cc_figure', fig.width=6.6, fig.height=5}
-```
-
-```{r, ref.label='cc_adjusting', results='asis', warning=FALSE}
-```
-
-## BIC criterion
-
-```{r}
-cc = HRs.cc$`BIC criterion`$global
-```
-
-```{r, ref.label='cc_figure', fig.width=6.6, fig.height=5}
-```
-
-```{r, ref.label='cc_adjusting', results='asis', warning=FALSE}
-```
-
-
-************
-
-```{r mi_figure, eval=FALSE}
+```{r, fig.width=6.6, fig.height=5}
 dplot = mi %>%
-  filter(substr(rowname, 1, 7) == 'itb_cat') %>%
+  filter(substr(term, 1, 7) == 'itb_cat') %>%
   transmute(
     outcome = variable,
-    abi = gsub('itb_cat', '', rowname),
+    abi = gsub('itb_cat', '', term),
     haz = exp(estimate),
     lo = exp(estimate - 1.96 * std.error),
     hi = exp(estimate + 1.96 * std.error)
@@ -143,17 +78,90 @@ ggplot(data = dplot) +
   labs(x = 'Hazard ratios', y = 'ABI category')
 ```
 
-```{r mi_adjusting, eval=FALSE}
+## Lia variables
+
+```{r}
+mi = HRs.mi$`Variables Lia`$global
+```
+
+```{r, fig.width=6.6, fig.height=5}
+dplot = mi %>%
+  filter(substr(term, 1, 7) == 'itb_cat') %>%
+  transmute(
+    outcome = variable,
+    abi = gsub('itb_cat', '', term),
+    haz = exp(estimate),
+    lo = exp(estimate - 1.96 * std.error),
+    hi = exp(estimate + 1.96 * std.error)
+  )
+ggplot(data = dplot) +
+  geom_vline(xintercept = 1, col = 'red', linetype = 2) +
+  geom_errorbarh(aes(y = abi, xmin = lo, xmax = hi), height = 0.4) +
+  geom_point(aes(y = abi, x = haz), shape = 18, size = 2) +
+  facet_wrap(~outcome, ncol = 2) +
+  theme(
+    axis.text.y = element_text(angle = 0)
+  ) +
+  labs(x = 'Hazard ratios', y = 'ABI category')
+```
+
+```{r, results='asis', warning=FALSE}
 adj = mi %>%
-  filter(substr(rowname, 1, 7) != 'itb_cat') %>%
+  filter(substr(term, 1, 7) != 'itb_cat') %>%
   group_by(variable) %>%
-  summarise(`adjusting variables` = paste(rowname, collapse = '+'))
+  summarise(`adjusting variables` = paste(term, collapse = '+'))
 for(i in 1:nrow(adj)){
   cat(sprintf("* __%s__: %s\n", adj$variable[i], adj$`adjusting variables`[i]))
 }
 ```
 
-```{r cc_figure, eval=FALSE}
+## BIC criterion
+
+```{r}
+mi = HRs.mi$`BIC criterion`$global
+```
+
+```{r, fig.width=6.6, fig.height=5}
+dplot = mi %>%
+  filter(substr(term, 1, 7) == 'itb_cat') %>%
+  transmute(
+    outcome = variable,
+    abi = gsub('itb_cat', '', term),
+    haz = exp(estimate),
+    lo = exp(estimate - 1.96 * std.error),
+    hi = exp(estimate + 1.96 * std.error)
+  )
+ggplot(data = dplot) +
+  geom_vline(xintercept = 1, col = 'red', linetype = 2) +
+  geom_errorbarh(aes(y = abi, xmin = lo, xmax = hi), height = 0.4) +
+  geom_point(aes(y = abi, x = haz), shape = 18, size = 2) +
+  facet_wrap(~outcome, ncol = 2) +
+  theme(
+    axis.text.y = element_text(angle = 0)
+  ) +
+  labs(x = 'Hazard ratios', y = 'ABI category')
+```
+
+```{r, results='asis', warning=FALSE}
+adj = mi %>%
+  filter(substr(term, 1, 7) != 'itb_cat') %>%
+  group_by(variable) %>%
+  summarise(`adjusting variables` = paste(term, collapse = '+'))
+for(i in 1:nrow(adj)){
+  cat(sprintf("* __%s__: %s\n", adj$variable[i], adj$`adjusting variables`[i]))
+}
+```
+
+
+# Complete-case
+
+## Unadjusted
+
+```{r}
+cc = HRs.cc$Unadjusted$global
+```
+
+```{r}
 dplot = cc %>%
   filter(substr(term, 1, 7) == 'itb_cat') %>%
   transmute(
@@ -174,7 +182,34 @@ ggplot(data = dplot) +
   labs(x = 'Hazard ratios', y = 'ABI category')
 ```
 
-```{r cc_adjusting, eval=FALSE}
+## Lia variables
+
+```{r}
+cc = HRs.cc$`Variables Lia`$global
+```
+
+```{r, fig.width=6.6, fig.height=5}
+dplot = cc %>%
+  filter(substr(term, 1, 7) == 'itb_cat') %>%
+  transmute(
+    outcome = variable,
+    abi = gsub('itb_cat', '', term),
+    haz = exp(estimate),
+    lo = exp(estimate - 1.96 * std.error),
+    hi = exp(estimate + 1.96 * std.error)
+  )
+ggplot(data = dplot) +
+  geom_vline(xintercept = 1, col = 'red', linetype = 2) +
+  geom_errorbarh(aes(y = abi, xmin = lo, xmax = hi), height = 0.4) +
+  geom_point(aes(y = abi, x = haz), shape = 18, size = 2) +
+  facet_wrap(~outcome, ncol = 2) +
+  theme(
+    axis.text.y = element_text(angle = 0)
+  ) +
+  labs(x = 'Hazard ratios', y = 'ABI category')
+```
+
+```{r, results='asis', warning=FALSE}
 adj = cc %>%
   filter(substr(term, 1, 7) != 'itb_cat') %>%
   group_by(variable) %>%
@@ -183,4 +218,42 @@ for(i in 1:nrow(adj)){
   cat(sprintf("* __%s__: %s\n", adj$variable[i], adj$`adjusting variables`[i]))
 }
 ```
+
+## BIC criterion
+
+```{r}
+cc = HRs.cc$`BIC criterion`$global
+```
+
+```{r, fig.width=6.6, fig.height=5}
+dplot = cc %>%
+  filter(substr(term, 1, 7) == 'itb_cat') %>%
+  transmute(
+    outcome = variable,
+    abi = gsub('itb_cat', '', term),
+    haz = exp(estimate),
+    lo = exp(estimate - 1.96 * std.error),
+    hi = exp(estimate + 1.96 * std.error)
+  )
+ggplot(data = dplot) +
+  geom_vline(xintercept = 1, col = 'red', linetype = 2) +
+  geom_errorbarh(aes(y = abi, xmin = lo, xmax = hi), height = 0.4) +
+  geom_point(aes(y = abi, x = haz), shape = 18, size = 2) +
+  facet_wrap(~outcome, ncol = 2) +
+  theme(
+    axis.text.y = element_text(angle = 0)
+  ) +
+  labs(x = 'Hazard ratios', y = 'ABI category')
+```
+
+```{r, results='asis', warning=FALSE}
+adj = cc %>%
+  filter(substr(term, 1, 7) != 'itb_cat') %>%
+  group_by(variable) %>%
+  summarise(`adjusting variables` = paste(term, collapse = '+'))
+for(i in 1:nrow(adj)){
+  cat(sprintf("* __%s__: %s\n", adj$variable[i], adj$`adjusting variables`[i]))
+}
+```
+
 

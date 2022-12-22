@@ -4,7 +4,7 @@ library(stringr)
 library(mice)
 library(survival)
 
-if(!exists('GROUP')) GROUP = 'CVD-no_DM2-no'
+if(!exists('GROUP')) GROUP = 'ALL'
 
 source('R/global.R')
 

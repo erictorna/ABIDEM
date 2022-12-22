@@ -1,6 +1,6 @@
 include global.make
 
-FIGURES = cumulative-incidences 
+FIGURES = cumulative-incidences hazard-ratios
 
 RDATA = $(foreach group,$(GROUPS),$(foreach figure,$(FIGURES),$(shell printf 'figures/%s_%s.RData' $(figure) $(group))))
 RMD = $(foreach group,$(GROUPS),$(foreach figure,$(FIGURES),$(shell printf 'www/figure-%s_%s.html' $(figure) $(group))))

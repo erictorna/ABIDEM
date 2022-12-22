@@ -51,7 +51,7 @@ global.mi %>%
   mutate(haz = exp(estimate),
          lo = exp(estimate - 1.96 * std.error),
          hi = exp(estimate + 1.96 * std.error),
-         term = sub('itb_cat', '', term...2)) %>%
+         term = sub('itb_cat', '', term)) %>%
   select(outcome = variable, term, haz, lo, hi, p.value, fmi) %>%
   left_join(prop.mi, by = c('outcome', 'term')) %>%
   as_huxtable(add_colnames = TRUE) %>%
@@ -104,7 +104,7 @@ sex.mi %>%
   mutate(haz = exp(estimate),
          lo = exp(estimate - 1.96 * std.error),
          hi = exp(estimate + 1.96 * std.error),
-         term = gsub('itb_cat', '', term...2)) %>%
+         term = gsub('itb_cat', '', term)) %>%
   select(outcome = variable, sex, term, haz, lo, hi, p.value, fmi) %>% 
   as_huxtable(add_colnames=TRUE) %>% 
   set_align('right') %>% 

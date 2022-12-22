@@ -67,10 +67,10 @@ fb_cox = function(.data){
 
 l_data = split(data, list(data$.imp, data$variable))
 models = parLapply(cl = CLUSTER, l_data, fb_cox)
-if (GROUP == 'Wom') { # Amb dones no tenim prous p.c02 en el complete casos de dementia vascular aixi que he de pendre mesures desesperades
-  models$`0.d.dementia_vascular`<-NULL
-  l_data$`0.d.dementia_vascular`<-NULL
-}
+# if (GROUP == 'Wom') { # Amb dones no tenim prous p.c02 en el complete casos de dementia vascular aixi que he de pendre mesures desesperades
+#   models$`0.d.dementia_vascular`<-NULL
+#   l_data$`0.d.dementia_vascular`<-NULL
+# }
 
 
 sex_interaction = function(mod, data){
@@ -102,7 +102,7 @@ itb_sex_interactions = tibble(
 l_data = split(data, list(data$.imp, data$variable, data$sex))
 models_sex = parLapply(cl = CLUSTER, l_data, fb_cox)
 
-# l_proportionality_sex = lapply(models_sex, cox.zph)
+l_proportionality_sex = lapply(models_sex, cox.zph)
 stopCluster(CLUSTER)
 
 df = lapply(models , function(.model){
@@ -192,8 +192,10 @@ data.imp = filter(data, .imp > 0) %>%
 # data.imp = data.imp %>% mutate(variable=ifelse(variable=='pspline(age, df = 0)', 'age', variable))
 # data.imp = data.imp %>% mutate(outcome=ifelse(outcome=='pspline(age, df = 0)', 'age', outcome))
 global.mi = survival(data.imp %>% left_join(vars.imp, by = 'outcome'))
+global.mi = global.mi %>% rename(term = term...2)
 sex.mi = survival(data.imp %>% left_join(vars_sex.imp, by = c('outcome', 'sex')), sex)
- 
+sex.mi = sex.mi %>% rename(term = term...2)
+
 # 
 # data.cc = filter(data, .imp == 0) %>%
 #   mutate(
