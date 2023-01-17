@@ -5,7 +5,7 @@ library(mice)
 library(survival)
 library(data.table)
 
-if(!exists('GROUP')) GROUP = 'Men'
+if(!exists('GROUP')) GROUP = 'ALL'
 
 source('R/global.R')
 
@@ -58,29 +58,29 @@ data.imp = filter(data, .imp > 0)
 global.mi = survival(data.imp)
 sex.mi = survival(data.imp, sex)
 
-data.cc = filter(data, .imp == 0)
-
-# Apanyo per treure les columnes amb les variables que minteressen
-setDT(global.mi)
-variables = global.mi[, .N, keyby=.(variable, term)]
-variables = c(variables$variable)
-global.cc = try(survival(data.cc), silent = TRUE)
-global.cc = global.cc %>% do(rownames_to_column(.$m))
-global.cc$rowname=variables
-global.cc = global.cc %>% rename(variable = rowname)
-if (GROUP == 'ALL') {
-  genders = c('D', 'D', 'D', 'D', 'D', 'H', 'H', 'H', 'H', 'H')
-  genderlist = c(genders, genders, genders, genders)
-  sex.cc = try(survival(data.cc, sex), silent = TRUE)
-  sex.cc = sex.cc %>% do(rownames_to_column(.$m))
-  sex.cc$sex=genderlist
-  variables = c("d.death", "d.death", "d.death", "d.death", "d.death", "d.death", "d.death", "d.death", "d.death", "d.death",
-                "d.dementia", "d.dementia", "d.dementia", "d.dementia", "d.dementia", "d.dementia", "d.dementia", "d.dementia", "d.dementia", "d.dementia", 
-                "d.dementia_alzheimer", "d.dementia_alzheimer",  "d.dementia_alzheimer", "d.dementia_alzheimer", "d.dementia_alzheimer", "d.dementia_alzheimer", "d.dementia_alzheimer", "d.dementia_alzheimer", "d.dementia_alzheimer", "d.dementia_alzheimer",
-                "d.dementia_vascular", "d.dementia_vascular", "d.dementia_vascular", "d.dementia_vascular","d.dementia_vascular", "d.dementia_vascular", "d.dementia_vascular", "d.dementia_vascular", "d.dementia_vascular", "d.dementia_vascular")
-  sex.cc$rowname = variables
-  sex.cc = sex.cc %>% rename(variable = rowname)
-}
+# data.cc = filter(data, .imp == 0)
+# 
+# # Apanyo per treure les columnes amb les variables que minteressen
+# setDT(global.mi)
+# variables = global.mi[, .N, keyby=.(variable, term)]
+# variables = c(variables$variable)
+# global.cc = try(survival(data.cc), silent = TRUE)
+# global.cc = global.cc %>% do(rownames_to_column(.$m))
+# global.cc$rowname=variables
+# global.cc = global.cc %>% rename(variable = rowname)
+# if (GROUP == 'ALL') {
+#   genders = c('D', 'D', 'D', 'D', 'D', 'H', 'H', 'H', 'H', 'H')
+#   genderlist = c(genders, genders, genders, genders)
+#   sex.cc = try(survival(data.cc, sex), silent = TRUE)
+#   sex.cc = sex.cc %>% do(rownames_to_column(.$m))
+#   sex.cc$sex=genderlist
+#   variables = c("d.death", "d.death", "d.death", "d.death", "d.death", "d.death", "d.death", "d.death", "d.death", "d.death",
+#                 "d.dementia", "d.dementia", "d.dementia", "d.dementia", "d.dementia", "d.dementia", "d.dementia", "d.dementia", "d.dementia", "d.dementia", 
+#                 "d.dementia_alzheimer", "d.dementia_alzheimer",  "d.dementia_alzheimer", "d.dementia_alzheimer", "d.dementia_alzheimer", "d.dementia_alzheimer", "d.dementia_alzheimer", "d.dementia_alzheimer", "d.dementia_alzheimer", "d.dementia_alzheimer",
+#                 "d.dementia_vascular", "d.dementia_vascular", "d.dementia_vascular", "d.dementia_vascular", "d.dementia_vascular", "d.dementia_vascular", "d.dementia_vascular", "d.dementia_vascular", "d.dementia_vascular", "d.dementia_vascular")
+#   sex.cc$rowname = variables
+#   sex.cc = sex.cc %>% rename(variable = rowname)
+# }
 rm(data, data.imp, data.cc, ending_with)
 
 save.image(file = sprintf('tables/hazard-ratios_%s.RData', GROUP))

@@ -28,13 +28,12 @@ ending_with = function(.data, end_, ...) .data  %>%
 data = inner_join(
   data %>% ending_with('.i', .imp, ocip, itb_cat, sex, p.cvd, p.frailty, p.hf,
                        age, men, p.smoking, bmi, sbp, dbp, pp, coltot, colldl, colhdl, tg, hba1c, glu,p.alcohol_high, time_diab,
-                       p.diabetes, p.dyslipidemia, p.b01aa, p.b01ab, p.b01ac, p.b01a_other, p.htn, p.aff, p.copd, p.ckd,
-                       p.neoplasms_malignant, p.dm_med, p.n06,
-                       p.c03, p.c07, p.c08, p.c09, p.c02, p.c10) 
+                       p.b01aa, p.b01ab, p.b01ac, p.b01a_other, p.htn, p.aff, p.copd, p.ckd,
+                       p.neoplasms_malignant, p.dm_med, p.alcohol_low,
+                       p.c03, p.c07, p.c08, p.c09, p.c02, p.statin, p.c10nostatin) 
                        %>% gather(variable, event, starts_with('d.')),
   data %>% ending_with('.t', .imp, ocip) %>% gather(variable, time, starts_with('d.')), 
   by = c('.imp', 'ocip', 'variable'))
-
 
 # OUTCOMES = c('d.ami',
 #              'd.stroke_i',
@@ -58,8 +57,8 @@ data = data %>% mutate(p.diabetes = ifelse(time_diab!=0, 1, 0))
 # data = data %>% mutate(p.c10=ifelse(p.c10nostatin == 1 | p.statin == 1, 1, 0))
 # Ajustem amb variables que em facilita la Lia en més de la cosa turbia que feia en Marc
 fb_cox = function(.data){
-  m0 = coxph(Surv(time, event)~itb_cat + p.smoking + p.alcohol_high + p.diabetes + p.htn + p.dm_med + colldl + tg + p.ckd + 
-               p.c02 + p.c03 + p.c07 + p.c08 + p.c09 + p.c10 + p.n06 + pspline(age, df=0), data = .data)
+    m0 = coxph(Surv(time, event)~itb_cat + p.smoking + p.alcohol_high + p.diabetes + p.htn + p.dm_med + colldl + tg + p.ckd + 
+                 p.c02 + p.c03 + p.c07 + p.c08 + p.c09 + p.c10nostatin + p.statin  + pspline(age, df=0), data = .data)
   # MASS::stepAIC(m0, list(upper = ~itb_cat+age+men+p.smoking+bmi+sbp+dbp+pp+coltot+colldl+colhdl+p.b01aa+p.b01ab+p.b01ac+p.b01a_other+p.hf+ 
   #                          tg+hba1c+glu+time_diab+p.htn+p.aff+p.copd+p.ckd+p.neoplasms_malignant+p.dm_med+p.c03+p.c07+p.c08+p.alcohol_high+
   #                          p.alcohol_low+p.c09+p.c02+p.statin+p.c10nostatin, lower = ~itb_cat), k = log(nrow(.data)))
@@ -67,10 +66,6 @@ fb_cox = function(.data){
 
 l_data = split(data, list(data$.imp, data$variable))
 models = parLapply(cl = CLUSTER, l_data, fb_cox)
-# if (GROUP == 'Wom') { # Amb dones no tenim prous p.c02 en el complete casos de dementia vascular aixi que he de pendre mesures desesperades
-#   models$`0.d.dementia_vascular`<-NULL
-#   l_data$`0.d.dementia_vascular`<-NULL
-# }
 
 
 sex_interaction = function(mod, data){
@@ -102,7 +97,7 @@ itb_sex_interactions = tibble(
 l_data = split(data, list(data$.imp, data$variable, data$sex))
 models_sex = parLapply(cl = CLUSTER, l_data, fb_cox)
 
-l_proportionality_sex = lapply(models_sex, cox.zph)
+# l_proportionality_sex = lapply(models_sex, cox.zph)
 stopCluster(CLUSTER)
 
 df = lapply(models , function(.model){
@@ -162,7 +157,7 @@ vars_sex.imp = df_sex %>%
 survival = function(.data, ..., .frm){
   .data_gr = .data %>%
     group_by(variable, .imp, ...)
-
+  
   suppressWarnings(
     models <- .data_gr %>% 
       do(mod =  coxph(eval(parse(text = sprintf("Surv(time, event)~%s", .$frm_txt[[1]]))), data = .)) %>%
@@ -185,38 +180,25 @@ survival = function(.data, ..., .frm){
   bind_cols(FMI, HRs)
 }
 
+
 data.imp = filter(data, .imp > 0) %>%
   mutate(
     outcome = gsub('d.', '', variable, fixed = TRUE)
   ) 
-# data.imp = data.imp %>% mutate(variable=ifelse(variable=='pspline(age, df = 0)', 'age', variable))
-# data.imp = data.imp %>% mutate(outcome=ifelse(outcome=='pspline(age, df = 0)', 'age', outcome))
-global.mi = survival(data.imp %>% left_join(vars.imp, by = 'outcome'))
-global.mi = global.mi %>% rename(term = term...2)
-sex.mi = survival(data.imp %>% left_join(vars_sex.imp, by = c('outcome', 'sex')), sex)
-sex.mi = sex.mi %>% rename(term = term...2)
 
-# 
+global.mi = survival(data.imp %>% left_join(vars.imp, by = 'outcome'))
+global.mi=global.mi %>% rename(term=term...2)
+sex.mi = survival(data.imp %>% left_join(vars_sex.imp, by = c('outcome', 'sex')), sex)
+sex.mi=sex.mi %>% rename(term=term...2)
+
+
 # data.cc = filter(data, .imp == 0) %>%
 #   mutate(
 #     outcome = gsub('d.', '', variable, fixed = TRUE)
 #   ) 
-
-
-# if (GROUP == 'Wom') { # Amb dones no tenim prous p.c02 en el complete cases de dementia vascular aixi que he de pendre mesures desesperades
-#   data.cc = data.cc[!(apply(data.cc, 1, function(y) any(y == 'dementia_vascular'))),]
-#   vars_sex.cc = vars_sex.cc[!(apply(vars_sex.cc, 1, function(y) any(y == 'dementia_vascular'))),]
-# }
-
-
-# global.cc = try(survival(data.cc %>% left_join(vars.cc, by = 'outcome')))
-# global.cc$m<-NULL
-# setDT(global.cc)
-# global.cc=global.cc[, p.value, keyby=.(variable, term, estimate, std.error, statistic)]
-# sex.cc = try(survival(data.cc %>% left_join(vars_sex.cc, by = c('outcome', 'sex')), sex))
-# sex.cc$m<-NULL
-# setDT(sex.cc)
-# sex.cc=sex.cc[, p.value, keyby=.(variable, sex, term, estimate, std.error, statistic)]
+# 
+# global.cc = survival(data.cc %>% left_join(vars.cc, by = 'outcome'))
+# sex.cc = try(survival(data.cc %>% left_join(vars_sex.cc, by = c('outcome', 'sex')), sex), silent = TRUE)
 
 rm(data, data.imp, CLUSTER, l_data, data.cc, models, models_sex, ending_with)
 

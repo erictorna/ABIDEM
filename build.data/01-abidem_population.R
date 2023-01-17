@@ -63,7 +63,7 @@ nrow(maria)
 maria = maria %>%
   subset(50 <= age & age <= 85)
 nrow(maria)
-# Condició anterior amb edat entre 50 i 85 anys: 69069
+# Condició anterior amb edat entre 50 i 85 anys: 63557
 
 FLOWCHART[['Aged 50-85']] = nrow(maria)
 
@@ -75,8 +75,8 @@ maria %>%
   count(!is.na(diabetes_a10) & diabetes_a10 <= dintro)
 # maria = maria %>%
 #   filter(!is.na(diabetes_a10) & diabetes_a10 <= dintro)
-# No diabètics: 19466
-# Diabètics: 49603
+# No diabètics: 17554
+# Diabètics: 46003
 
 # Eliminem els diabètics T1
 maria = maria %>%
@@ -84,7 +84,7 @@ maria = maria %>%
   subset(!((!is.na(diabetes) & diabetes <= dintro) &
              !(!is.na(diabetes_t2) & diabetes_t2 <= dintro)))
 nrow(maria)
-# 68069
+# 63094
 
 
 FLOWCHART[['DM2 or without DM with ABI']] = nrow(maria)
@@ -99,38 +99,38 @@ maria %>%
   count(!(itb < 0.9 &
             (itb < 0.4 |
                ocip %in% claudica |
-               ocip %in% pad_treat_prev_ocip))) # 3360
+               ocip %in% pad_treat_prev_ocip))) # 3257
 maria %>%
   count(!(itb < 0.9 &
-            (itb < 0.4))) # 593
+            (itb < 0.4))) # 570
 
 maria %>%
   subset(!(itb < 0.9 &
             (itb < 0.4))) %>%
   count(!(itb < 0.9 &
-            (ocip %in% claudica))) # 257
+            (ocip %in% claudica))) # 237
 maria %>%
   subset(!(itb < 0.9 &                  
              (itb < 0.4))) %>%
   subset(!(itb < 0.9 &
             (ocip %in% claudica))) %>%
   count(!(itb < 0.9 &
-            (ocip %in% pad_treat_prev_ocip))) # 2510
+            (ocip %in% pad_treat_prev_ocip))) # 2450
 maria <- maria %>%
   subset(!(itb < 0.9 &
              (itb < 0.4 |
                 ocip %in% claudica |
                 ocip %in% pad_treat_prev_ocip)))
-nrow(maria)   ## 64709
+nrow(maria)   ## 59837
 
 FLOWCHART[['Without PAD symptomatic']] = nrow(maria) 
 
 maria %>%
-  count(itb >= 3)  # 2479
+  count(itb >= 3)  # 2364
 maria = maria %>%
   subset(itb < 3)
 nrow(maria)
-## 62230
+## 57473
 FLOWCHART[['ABI < 3']] = nrow(maria)
 
 maria$cvd = apply(maria[,c('ami', 'ami_atc', 'angor', 'ihd_atc', 'stroke', 'tia', 'pad_atc')], 1, min, na.rm=TRUE)
@@ -138,14 +138,12 @@ maria = maria %>%
   mutate(
     p.cvd = as.integer(!is.na(cvd) & cvd <= dintro)
   )
-# maria %>%
-#   count()
-# # 9521
+
 maria = maria %>%
   filter(p.cvd == 0)
 
 # nrow(maria)
-# 34689
+# 44983
 FLOWCHART[['Without CVD']] = nrow(maria)
 
 maria$frailty = apply(maria[,c('plegies', 'transplantament', 'dialisi', 'dementia', 'neoplasms_malignant', 'atdom')], 1, min, na.rm=TRUE)

@@ -12,3 +12,15 @@ output: html_document
 * Noves definicions de demencia by Jordi [[20221116]](20221116/index.html)
 
 * Nova versio buscant replicar resultats anteriors [[20221220]](20221220/index.html)
+
+* Variables antigues [[20221223]](20221223/index.html)
+
+* Vascular significatiu [[20230110]](20230110/index.html)
+
+* Ajuntar ITB_cat [[20230110_2]](20230110_2/index.html)
+
+* Definicions demencia antigues [[20230117]](20230117/index.html)
+
+-------------------------------------------------------------------------
+
+* Script Marc 65-85 [[20230117_2]](20230117_2/index.html)

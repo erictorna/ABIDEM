@@ -93,7 +93,7 @@ problems = problems %>%
   bind_rows(dementia_alzheimer %>% mutate(source = 'ecap', field = 'ecap', disease = 'dementia_alzheimer') %>% 
               select(ocip, date = dalta, source, field, disease)) %>%
   bind_rows(dementia_vascular %>% mutate(source = 'ecap', field = 'ecap', disease = 'dementia_vascular') %>% 
-              select(ocip, date = dalta, source, field, disease)) #%>%
+               select(ocip, date = dalta, source, field, disease)) #%>%
   # bind_rows(dementia_unspecified %>% mutate(source = 'ecap', field = 'ecap', disease = 'dementia_unspecified') %>% 
   #             select(ocip, date = dalta, source, field, icd, disease))
 
@@ -248,7 +248,11 @@ maria = maria %>%
   mutate(itb_cat = cut(itb, breaks = c(0.0, 0.4, 0.5, 0.7, 0.9, 1.1, 1.3, 3), include.lowest = T, right = F))
 maria$itb_cat <- factor(maria$itb_cat, levels = c('[1.1,1.3)', '[0.4,0.5)', '[0.5,0.7)', '[0.7,0.9)', '[0.9,1.1)', '[1.3,3]'))
 
-maria = maria %>% 
+# maria = maria %>%
+#   mutate(itb_cat = cut(itb, breaks = c(0.4, 0.7, 0.9, 1.1, 1.3, 3), include.lowest = T, right = F))
+# maria$itb_cat <- factor(maria$itb_cat, levels = c('[1.1,1.3)', '[0.4,0.7)', '[0.7,0.9)', '[0.9,1.1)', '[1.3,3]'))
+
+maria = maria %>%
   mutate(age_cat = cut(age, breaks = c(35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 200), include.lowest = T, right = F))
 
 library(lubridate)
